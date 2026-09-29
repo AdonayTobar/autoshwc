@@ -12,7 +12,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Librerías -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -37,7 +36,7 @@
 </head>
 
 <body class="bg-slate-100 font-sans text-slate-800 antialiased" x-data="fleetApp()"
-      :class="{'overflow-hidden': sidebarOpen || gastoOpen || gastoDetalleOpen || vehOpen || vehDetalleOpen || confirmModal.show}">
+      :class="{'overflow-hidden': sidebarOpen || gastoOpen || gastoDetalleOpen || vehOpen || vehDetalleOpen || driverOpen || confirmModal.show}">
 
 <!-- ══════════ TOASTS ══════════ -->
 <div x-cloak x-show="toast.show" x-transition.opacity class="fixed bottom-5 left-1/2 z-[100] w-[92%] max-w-sm -translate-x-1/2">
@@ -91,7 +90,6 @@
 <!-- ══════════ APP ══════════ -->
 <div x-cloak x-show="user" class="min-h-screen">
 
-  <!-- overlay sidebar móvil -->
   <div x-cloak x-show="sidebarOpen" @click="sidebarOpen=false" class="fixed inset-0 z-30 bg-slate-900/60 backdrop-blur-sm md:hidden"></div>
 
   <!-- SIDEBAR -->
@@ -100,7 +98,7 @@
     <div class="flex items-center gap-3 border-b border-white/10 px-5 py-5">
       <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-lg font-extrabold text-white">A</div>
       <div>
-        <p class="text-[15px] font-bold text-white leading-tight">Autos HWC</p>
+        <p class="text-[15px] font-bold leading-tight text-white">Autos HWC</p>
         <p class="text-[11px] text-slate-400">Control de gastos</p>
       </div>
     </div>
@@ -135,6 +133,10 @@
 
       <div x-cloak x-show="user?.rol==='admin'" class="mt-4 space-y-1 border-t border-white/10 pt-4">
         <p class="px-3.5 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">Administración</p>
+        <button @click="go('drivers')" :class="activeSection==='drivers' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
+          <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3 3 0 11-6 0 3 3 0 016 0zM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.5-1.632z"/></svg>
+          Drivers
+        </button>
         <button @click="go('reportes')" :class="activeSection==='reportes' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
           <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
           Reportes
@@ -171,7 +173,6 @@
 
     <main class="relative flex-1 p-4 pb-28 sm:p-6 lg:p-8">
 
-      <!-- loader -->
       <div x-cloak x-show="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
         <svg class="h-10 w-10 animate-spin text-emerald-600" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
       </div>
@@ -288,7 +289,7 @@
       <!-- ══════ MIS CARROS ══════ -->
       <section x-cloak x-show="activeSection==='miscarros'">
         <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Mis Carros</h1>
-        <p class="mb-6 text-sm text-slate-500">Asignados a vos o marcados con estrella.</p>
+        <p class="mb-6 text-sm text-slate-500">Camionetas donde sos conductor (asignado o extra) o que marcaste con estrella.</p>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <template x-for="v in misCarros" :key="v.id">
             <div class="card relative p-5 transition hover:shadow-md">
@@ -300,6 +301,7 @@
                 <span class="badge" :class="estadoCls(v.estado)" x-text="estadoTxt(v.estado)"></span>
                 <span x-show="v.placa" class="badge bg-slate-100 text-slate-600" x-text="v.placa"></span>
                 <span x-show="v.anio" class="badge bg-slate-100 text-slate-600" x-text="v.anio"></span>
+                <span x-show="v.ubicacion" class="badge bg-sky-100 text-sky-700" x-text="v.ubicacion"></span>
               </div>
               <p class="mt-3 text-[13px] text-slate-500">Total gastado: <span class="font-bold text-slate-700" x-text="fmtMoney(gastoTotalVeh(v.id))"></span></p>
               <div class="mt-4 flex gap-2">
@@ -310,8 +312,8 @@
           </template>
           <div x-show="misCarros.length===0" class="card col-span-full border-dashed p-10 text-center">
             <p class="text-4xl">🚗</p>
-            <p class="mt-3 font-semibold text-slate-700">No tenés carros acá</p>
-            <p class="mt-1 text-sm text-slate-500">Andá a "Vehículos" y marcá los tuyos con la estrella ★, o pedí que te los asignen.</p>
+            <p class="mt-3 font-semibold text-slate-700">No tenés camionetas acá</p>
+            <p class="mt-1 text-sm text-slate-500">Marcá las tuyas con la estrella ★ en "Vehículos", o pedí que te agreguen como driver.</p>
           </div>
         </div>
       </section>
@@ -391,7 +393,7 @@
         <div class="card mb-4 p-4">
           <div class="relative">
             <svg class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-            <input x-model="buscarVeh" class="inp pl-11" placeholder="Buscar por modelo, VIN, placa, title o driver…">
+            <input x-model="buscarVeh" class="inp pl-11" placeholder="Buscar por modelo, VIN, placa, title o conductor…">
           </div>
         </div>
         <div class="card overflow-hidden">
@@ -399,7 +401,7 @@
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="bg-slate-50"><tr>
                 <th class="th">★</th><th class="th">VIN</th><th class="th">Modelo</th><th class="th">Placa</th>
-                <th class="th">Estado</th><th class="th">Driver</th><th class="th text-right">Total gastado</th>
+                <th class="th">Estado</th><th class="th">Conductores</th><th class="th text-right">Total gastado</th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="v in vehTabla" :key="v.id">
@@ -410,17 +412,67 @@
                     <td class="td font-mono text-[12px] text-slate-500" x-text="v.vin || '—'"></td>
                     <td class="td">
                       <p class="font-semibold text-slate-900" x-text="v.modelo"></p>
-                      <p class="text-[12px] text-slate-400"><span x-text="v.anio || ''"></span> <span x-text="v.color ? '· '+v.color : ''"></span></p>
+                      <p class="text-[12px] text-slate-400"><span x-text="v.anio || ''"></span> <span x-text="v.color ? '· '+v.color : ''"></span> <span x-show="v.ubicacion" x-text="'· '+v.ubicacion"></span></p>
                     </td>
                     <td class="td" x-text="v.placa || '—'"></td>
                     <td class="td"><span class="badge" :class="estadoCls(v.estado)" x-text="estadoTxt(v.estado)"></span></td>
-                    <td class="td" x-text="v.driver_id ? nombreDe(v.driver_id) : '—'"></td>
+                    <td class="td max-w-[170px]"><p class="truncate" x-text="resumenDrivers(v.id)"></p></td>
                     <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(gastoTotalVeh(v.id))"></td>
                   </tr>
                 </template>
                 <tr x-show="vehTabla.length===0"><td colspan="7" class="px-4 py-10 text-center text-sm text-slate-400">Sin resultados.</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ DRIVERS (admin) ══════ -->
+      <section x-cloak x-show="activeSection==='drivers'">
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Drivers</h1>
+            <p class="text-sm text-slate-500"><span x-text="drivers.length"></span> conductores registrados</p>
+          </div>
+          <button @click="abrirDriver()" class="btn-p">+ Nuevo driver</button>
+        </div>
+        <div class="card mb-4 p-4">
+          <input x-model="buscarDriverTxt" class="inp" placeholder="Buscar por nombre o teléfono…">
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <template x-for="d in driversFiltrados" :key="d.id">
+            <div class="card p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <h3 class="truncate text-base font-bold text-slate-900" x-text="d.nombre"></h3>
+                  <a x-show="d.telefono" :href="'tel:'+(d.telefono||'')" class="text-sm font-medium text-emerald-700 hover:underline" x-text="d.telefono"></a>
+                </div>
+                <div class="flex shrink-0 gap-1">
+                  <button @click="abrirDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-600" title="Editar">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                  </button>
+                  <button @click="pedirBorrarDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600" title="Eliminar">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                  </button>
+                </div>
+              </div>
+              <p x-show="d.nota" class="mt-2 text-[13px] text-slate-500" x-text="d.nota"></p>
+              <div class="mt-3 border-t border-slate-100 pt-3">
+                <p class="text-[11px] font-semibold uppercase text-slate-400">Vehículos</p>
+                <div class="mt-1.5 flex flex-wrap gap-1.5">
+                  <template x-for="(a,i) in autosDeDriver(d.id)" :key="i">
+                    <button @click="abrirDetalleVeh(a.veh)" class="badge hover:brightness-95" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
+                      <span x-text="a.veh.modelo"></span> · <span x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+                    </button>
+                  </template>
+                  <p x-show="autosDeDriver(d.id).length===0" class="text-[13px] text-slate-400">Sin camionetas</p>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div x-show="driversFiltrados.length===0" class="card col-span-full border-dashed p-10 text-center">
+            <p class="font-semibold text-slate-700">Todavía no hay drivers</p>
+            <p class="mt-1 text-sm text-slate-500">Creá el primero con el botón "+ Nuevo driver".</p>
           </div>
         </div>
       </section>
@@ -585,7 +637,7 @@
   </div>
 
   <!-- FAB -->
-  <button x-cloak x-show="user && activeSection!=='reportes'" @click="abrirGasto()"
+  <button x-cloak x-show="user && activeSection!=='reportes' && activeSection!=='drivers'" @click="abrirGasto()"
           class="fixed bottom-6 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-xl shadow-emerald-600/30 transition hover:scale-105 hover:bg-emerald-700">
     <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
   </button>
@@ -601,7 +653,6 @@
   </div>
   <div class="mx-auto max-w-2xl p-4 sm:p-6">
     <div class="space-y-5">
-      <!-- vehículo -->
       <div>
         <label class="lbl">1 · Vehículo</label>
         <template x-if="!gEsEdicion">
@@ -628,7 +679,6 @@
         </template>
       </div>
 
-      <!-- datos -->
       <div class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2">
         <div>
           <label class="lbl">Monto (USD) *</label>
@@ -655,7 +705,6 @@
         </div>
       </div>
 
-      <!-- foto -->
       <div class="border-t border-slate-100 pt-5">
         <label class="lbl">Foto de la factura</label>
         <div class="flex items-center gap-4">
@@ -731,14 +780,14 @@
     <p class="mb-5 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Identificación</p>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div><label class="lbl">VIN / Patente *</label><input x-model="vForm.vin" class="inp font-mono uppercase" placeholder="1HGCM8…"></div>
-      <div><label class="lbl">Modelo *</label><input x-model="vForm.modelo" class="inp" placeholder="Toyota Camry"></div>
+      <div><label class="lbl">Modelo *</label><input x-model="vForm.modelo" class="inp" placeholder="FORD F250"></div>
       <div><label class="lbl">Placa</label><input x-model="vForm.placa" class="inp uppercase" placeholder="ABC-1234"></div>
       <div><label class="lbl">Año</label><input type="number" x-model="vForm.anio" class="inp" placeholder="2019"></div>
       <div><label class="lbl">Color</label><input x-model="vForm.color" class="inp" placeholder="Blanco"></div>
-      <div><label class="lbl">Title</label><input x-model="vForm.title" class="inp" placeholder="Clean / Salvage…"></div>
+      <div><label class="lbl">Title</label><input x-model="vForm.title" class="inp" placeholder="HWC / JOSE…"></div>
     </div>
 
-    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Estado y asignación</p>
+    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Estado, sede y conductores</p>
     <div class="grid gap-4 sm:grid-cols-2">
       <div>
         <label class="lbl">Estado</label>
@@ -748,11 +797,33 @@
         </select>
       </div>
       <div>
-        <label class="lbl">Driver (asignado a)</label>
-        <select x-model="vForm.driver_id" class="inp">
-          <option value="">Sin asignar</option>
-          <template x-for="p in perfiles" :key="p.id"><option :value="p.id" x-text="p.nombre"></option></template>
-        </select>
+        <label class="lbl">Sede</label>
+        <input x-model="vForm.ubicacion" class="inp uppercase" placeholder="HOUSTON / AUSTIN">
+      </div>
+      <div class="sm:col-span-2">
+        <label class="lbl">Conductores de esta camioneta</label>
+        <div class="mb-2 flex flex-wrap gap-2" x-show="vForm.asignaciones && vForm.asignaciones.length">
+          <template x-for="a in vForm.asignaciones" :key="a.driver_id">
+            <span class="inline-flex items-center gap-1.5 rounded-full py-1 pl-3 pr-1.5 text-[13px] font-semibold" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
+              <span x-text="a.nombre"></span>
+              <span class="text-[10px] font-bold uppercase opacity-60" x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+              <button type="button" @click="quitarAsignacion(a.driver_id)" class="flex h-5 w-5 items-center justify-center rounded-full bg-white/70 text-[11px] hover:bg-white">✕</button>
+            </span>
+          </template>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <select x-model="vForm.nuevoDriver" class="inp sm:flex-1">
+            <option value="">Elegir driver…</option>
+            <template x-for="d in driversNoEnForm" :key="d.id"><option :value="d.id" x-text="d.nombre"></option></template>
+          </select>
+          <select x-model="vForm.nuevoTipo" class="inp sm:w-36">
+            <option value="principal">Asignado</option>
+            <option value="extra">Extra</option>
+          </select>
+          <button type="button" @click="agregarAsignacion()" class="btn-p sm:w-12">+</button>
+        </div>
+        <p class="mt-1.5 text-[12px] text-slate-400">"Asignado" = conductor principal · "Extra" = también la maneja. Podés agregar varios.</p>
+        <p x-show="drivers.length===0" class="mt-1.5 text-[12px] text-amber-600">Todavía no creaste drivers — andá a la sección "Drivers" en el menú.</p>
       </div>
       <div class="sm:col-span-2"><label class="lbl">Nota</label><textarea x-model="vForm.nota" rows="2" class="inp" placeholder="Detalles del auto…"></textarea></div>
     </div>
@@ -798,11 +869,11 @@
           <div class="card p-5 lg:col-span-2">
             <div class="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
               <div><p class="text-[11px] font-medium uppercase text-slate-400">Estado</p><span class="badge mt-1" :class="estadoCls(vSel.estado)" x-text="estadoTxt(vSel.estado)"></span></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400">Sede</p><p class="font-semibold" x-text="vSel.ubicacion || '—'"></p></div>
               <div><p class="text-[11px] font-medium uppercase text-slate-400">Placa</p><p class="font-semibold" x-text="vSel.placa || '—'"></p></div>
               <div><p class="text-[11px] font-medium uppercase text-slate-400">Año</p><p class="font-semibold" x-text="vSel.anio || '—'"></p></div>
               <div><p class="text-[11px] font-medium uppercase text-slate-400">Color</p><p class="font-semibold" x-text="vSel.color || '—'"></p></div>
               <div><p class="text-[11px] font-medium uppercase text-slate-400">Title</p><p class="font-semibold" x-text="vSel.title || '—'"></p></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Driver</p><p class="font-semibold" x-text="vSel.driver_id ? nombreDe(vSel.driver_id) : '—'"></p></div>
               <div x-show="vSel.fecha_compra"><p class="text-[11px] font-medium uppercase text-slate-400">Compra</p><p class="font-semibold" x-text="fmtFecha(vSel.fecha_compra)"></p></div>
               <div x-show="vSel.precio_compra"><p class="text-[11px] font-medium uppercase text-slate-400">Precio compra</p><p class="font-semibold" x-text="fmtMoney(vSel.precio_compra)"></p></div>
               <div x-show="vSel.seguro_compania"><p class="text-[11px] font-medium uppercase text-slate-400">Aseguradora</p><p class="font-semibold" x-text="vSel.seguro_compania"></p></div>
@@ -816,6 +887,16 @@
                 <p class="font-semibold" x-text="fmtFecha(vSel.registro_vencimiento)"></p>
                 <span class="badge mt-1" :class="venCls(vSel.registro_vencimiento)" x-text="venTxt(vSel.registro_vencimiento)"></span>
               </div>
+              <div class="col-span-2 sm:col-span-3"><p class="text-[11px] font-medium uppercase text-slate-400">Conductores</p>
+                <div class="mt-1 flex flex-wrap gap-1.5">
+                  <template x-for="a in driversDeVeh(vSel.id)" :key="a.driver_id">
+                    <span class="badge" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'">
+                      <span x-text="nombreDriver(a.driver_id)"></span> · <span x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+                    </span>
+                  </template>
+                  <span x-show="driversDeVeh(vSel.id).length===0" class="text-sm text-slate-400">Sin asignar</span>
+                </div>
+              </div>
             </div>
             <div class="mt-5 border-t border-slate-100 pt-4" x-show="vSel.nota">
               <p class="text-[11px] font-medium uppercase text-slate-400">Nota</p>
@@ -825,7 +906,7 @@
           <div class="card p-5">
             <p class="text-[11px] font-medium uppercase text-slate-400">Total gastado</p>
             <p class="text-3xl font-bold text-slate-900" x-text="fmtMoney(gastoTotalVeh(vSel.id))"></p>
-            <p class="mt-2 text-sm text-slate-500"><span x-text="gastoTotalVeh(vSel.id) ? gastosVeh.length : 0"></span> gastos registrados</p>
+            <p class="mt-2 text-sm text-slate-500"><span x-text="gastosVeh.length"></span> gastos registrados</p>
             <p class="mt-1 text-sm text-slate-500" x-show="ultimoGastoVeh">Último: <span x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : ''"></span></p>
             <button @click="verHistorialVeh(vSel)" class="btn-s mt-4 w-full">Ver historial completo</button>
           </div>
@@ -838,6 +919,30 @@
         </div>
       </div>
     </template>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: NUEVO / EDITAR DRIVER ══════════ -->
+<div x-cloak x-show="driverOpen" class="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm">
+  <div class="card my-8 w-full max-w-md p-6">
+    <h2 class="mb-5 text-lg font-bold text-slate-900" x-text="dEsEdicion ? 'Editar driver' : 'Nuevo driver'"></h2>
+    <div class="space-y-4">
+      <div><label class="lbl">Nombre completo *</label><input x-model="dForm.nombre" class="inp" placeholder="José Pérez"></div>
+      <div><label class="lbl">Teléfono</label><input x-model="dForm.telefono" class="inp" placeholder="+1 713 555 0100"></div>
+      <div><label class="lbl">Nota</label><textarea x-model="dForm.nota" rows="2" class="inp" placeholder="Opcional"></textarea></div>
+      <div>
+        <label class="lbl">Vincular a usuario de la app (opcional)</label>
+        <select x-model="dForm.user_id" class="inp">
+          <option value="">Sin vincular</option>
+          <template x-for="p in perfiles" :key="p.id"><option :value="p.id" x-text="p.nombre"></option></template>
+        </select>
+        <p class="mt-1 text-[12px] text-slate-400">Si lo vinculás, esa persona ve las camionetas de este driver en "Mis Carros".</p>
+      </div>
+    </div>
+    <div class="mt-6 flex gap-3">
+      <button @click="guardarDriver()" :disabled="guardandoDriver" class="btn-p flex-1">Guardar</button>
+      <button @click="driverOpen=false" class="btn-s flex-1">Cancelar</button>
+    </div>
   </div>
 </div>
 
@@ -859,10 +964,9 @@
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-//  CONFIGURACIÓN — CAMBIÁ ESTOS DOS VALORES POR LOS DE TU PROYECTO
-//  (Supabase → Settings → API → "Project URL" y "anon public")
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  CONFIGURACIÓN
+// ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://nfizwexpujbgdhyccycy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5maXp3ZXhwdWpiZ2RoeWNjeWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NTQzODYsImV4cCI6MjEwNjEzMDM4Nn0.lbyT9vaz9QAEfeho_vMC9XBfE6cNttzhe3rHkXSYeWY';
 
@@ -873,20 +977,24 @@ function fleetApp() {
     user: null, loginEmail: '', loginPass: '', loginError: '', showPass: false, cargandoLogin: false,
     loading: false,
     vehiculos: [], gastos: [], perfiles: [], categorias: [], favoritosIds: [],
+    drivers: [], asignaciones: [],
     sidebarOpen: false, activeSection: 'dashboard',
     toast: { show: false, type: 'success', title: '', msg: '' }, _toastT: null,
     confirmModal: { show: false, title: '', msg: '', texto: 'Eliminar', action: null },
 
     /* ── gasto (form + detalle) ── */
     gastoOpen: false, gEsEdicion: false, gForm: {}, gBusco: '', gOpciones: [],
-    fotoBlob: null, fotoPreview: '', comprimiendo: false, guardando: false,
+    fotoBlob: null, fotoPreview: '', comprimindo: false, guardando: false,
     gastoDetalleOpen: false, gSel: null, fotoUrl: null, firmandoFoto: false,
 
     /* ── vehículo (form + detalle) ── */
     vehOpen: false, vEsEdicion: false, vForm: {}, guardandoVeh: false,
     vehDetalleOpen: false, vSel: null,
 
-    /* ── filtros / paginación ── */
+    /* ── drivers ── */
+    driverOpen: false, dEsEdicion: false, dForm: {}, guardandoDriver: false, buscarDriverTxt: '',
+
+    /* ── filtros / paginación / reportes ── */
     fVeh: '', fConcepto: '', fCategoria: '', fEmpleado: '', fFecha: '', page: 1, perPage: 25,
     fvEmpleado: '', fvFecha: '', pageV: 1,
     buscarVeh: '',
@@ -926,6 +1034,7 @@ function fleetApp() {
 
     apagar() {
       this.user = null; this.vehiculos = []; this.gastos = []; this.perfiles = []; this.categorias = []; this.favoritosIds = [];
+      this.drivers = []; this.asignaciones = [];
       this.activeSection = 'dashboard'; this.sidebarOpen = false; this.loginEmail = ''; this.loginPass = ''; this.loginError = '';
       if (this.canal) { this.sb.removeChannel(this.canal); this.canal = null; }
       Object.values(this.ch).forEach(c => { if (c) c.destroy(); });
@@ -943,18 +1052,19 @@ function fleetApp() {
 
     /* ══════ DATOS ══════ */
     async cargarDatos() {
-      const [r1, r2, r3, r4, r5] = await Promise.all([
+      const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
         this.sb.from('vehiculos').select('*').order('modelo'),
         this.sb.from('gastos_detalle').select('*').order('fecha', { ascending: false }).order('created_at', { ascending: false }).limit(5000),
         this.sb.from('profiles').select('id,nombre,rol').order('nombre'),
         this.sb.from('categorias').select('id,nombre,orden').order('orden'),
         this.sb.from('favoritos').select('vehiculo_id').eq('user_id', this.user.id),
+        this.sb.from('drivers').select('*').order('nombre'),
+        this.sb.from('vehiculo_drivers').select('*'),
       ]);
-      if (r1.error || r2.error || r3.error || r4.error || r5.error) {
-        this.avisar('Error', 'No pude cargar los datos. Revisá tu conexión.', 'error'); return;
-      }
+      if ([r1, r2, r3, r4, r5, r6, r7].some(r => r.error)) { this.avisar('Error', 'No pude cargar los datos. Revisá tu conexión.', 'error'); return; }
       this.vehiculos = r1.data; this.gastos = r2.data; this.perfiles = r3.data;
       this.categorias = r4.data; this.favoritosIds = r5.data.map(f => f.vehiculo_id);
+      this.drivers = r6.data; this.asignaciones = r7.data;
     },
 
     async refrescar() {
@@ -972,6 +1082,8 @@ function fleetApp() {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'gastos' }, () => this.recargarEnVivo())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'vehiculos' }, () => this.recargarEnVivo())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'favoritos' }, () => this.recargarEnVivo())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'drivers' }, () => this.recargarEnVivo())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'vehiculo_drivers' }, () => this.recargarEnVivo())
         .subscribe();
     },
     recargarEnVivo() {
@@ -1042,8 +1154,14 @@ function fleetApp() {
     get misCarros() {
       if (!this.user) return [];
       const out = [], ids = new Set();
-      [...this.vehiculos.filter(v => v.driver_id === this.user.id), ...this.vehiculos.filter(v => this.esFav(v.id))]
-        .forEach(v => { if (!ids.has(v.id)) { ids.add(v.id); out.push(v); } });
+      const miDriver = this.drivers.find(d => d.user_id === this.user.id);
+      if (miDriver) {
+        this.asignaciones.filter(a => a.driver_id === miDriver.id).forEach(a => {
+          const v = this.vehiculos.find(x => x.id === a.vehiculo_id);
+          if (v && !ids.has(v.id)) { ids.add(v.id); out.push(v); }
+        });
+      }
+      this.vehiculos.filter(v => this.esFav(v.id)).forEach(v => { if (!ids.has(v.id)) { ids.add(v.id); out.push(v); } });
       return out;
     },
 
@@ -1051,7 +1169,7 @@ function fleetApp() {
     get vehTabla() {
       const t = this.buscarVeh.trim().toLowerCase();
       if (!t) return this.vehiculos;
-      return this.vehiculos.filter(v => [v.vin, v.modelo, v.placa, v.title, this.nombreDe(v.driver_id)].some(x => (x || '').toLowerCase().includes(t)));
+      return this.vehiculos.filter(v => [v.vin, v.modelo, v.placa, v.title, this.resumenDrivers(v.id)].some(x => (x || '').toLowerCase().includes(t)));
     },
     get gastosFiltrados() {
       return this.gastos.filter(g => {
@@ -1192,14 +1310,14 @@ function fleetApp() {
     /* ══════ VEHÍCULOS ══════ */
     abrirVeh() {
       this.vEsEdicion = false;
-      this.vForm = { id: null, vin: '', placa: '', modelo: '', anio: '', color: '', title: '', driver_id: '', estado: 'activo', nota: '', fecha_compra: '', precio_compra: '', seguro_compania: '', seguro_vencimiento: '', registro_vencimiento: '' };
+      this.vForm = { id: null, vin: '', placa: '', modelo: '', anio: '', color: '', title: '', estado: 'activo', ubicacion: '', nota: '', fecha_compra: '', precio_compra: '', seguro_compania: '', seguro_vencimiento: '', registro_vencimiento: '', asignaciones: [], nuevoDriver: '', nuevoTipo: 'principal' };
       this.vehOpen = true;
     },
     abrirDetalleVeh(v) { this.vSel = v; this.vehDetalleOpen = true; },
     editarVehDesdeDetalle() {
       const v = this.vSel;
       this.vEsEdicion = true;
-      this.vForm = { id: v.id, vin: v.vin || '', placa: v.placa || '', modelo: v.modelo || '', anio: v.anio || '', color: v.color || '', title: v.title || '', driver_id: v.driver_id || '', estado: v.estado || 'activo', nota: v.nota || '', fecha_compra: v.fecha_compra || '', precio_compra: v.precio_compra || '', seguro_compania: v.seguro_compania || '', seguro_vencimiento: v.seguro_vencimiento || '', registro_vencimiento: v.registro_vencimiento || '' };
+      this.vForm = { id: v.id, vin: v.vin || '', placa: v.placa || '', modelo: v.modelo || '', anio: v.anio || '', color: v.color || '', title: v.title || '', estado: v.estado || 'activo', ubicacion: v.ubicacion || '', nota: v.nota || '', fecha_compra: v.fecha_compra || '', precio_compra: v.precio_compra || '', seguro_compania: v.seguro_compania || '', seguro_vencimiento: v.seguro_vencimiento || '', registro_vencimiento: v.registro_vencimiento || '', asignaciones: this.driversDeVeh(v.id).map(a => ({ driver_id: a.driver_id, nombre: this.nombreDriver(a.driver_id), principal: a.principal })), nuevoDriver: '', nuevoTipo: 'principal' };
       this.vehDetalleOpen = false; this.vehOpen = true;
     },
     async guardarVeh() {
@@ -1210,20 +1328,29 @@ function fleetApp() {
       const fila = {
         vin: f.vin.trim().toUpperCase(), placa: this.nul(f.placa), modelo: f.modelo.trim(),
         anio: f.anio ? parseInt(f.anio) : null, color: this.nul(f.color), title: this.nul(f.title),
-        driver_id: f.driver_id || null, estado: f.estado || 'activo', nota: this.nul(f.nota),
+        estado: f.estado || 'activo', nota: this.nul(f.nota), ubicacion: this.nul(f.ubicacion),
         fecha_compra: this.nul(f.fecha_compra), precio_compra: f.precio_compra === '' ? null : parseFloat(f.precio_compra),
         seguro_compania: this.nul(f.seguro_compania), seguro_vencimiento: this.nul(f.seguro_vencimiento), registro_vencimiento: this.nul(f.registro_vencimiento),
       };
-      let error;
-      if (this.vEsEdicion) ({ error } = await this.sb.from('vehiculos').update(fila).eq('id', f.id));
-      else { fila.creado_por = this.user.id; ({ error } = await this.sb.from('vehiculos').insert(fila)); }
-      if (error) {
-        this.avisar('Error', (error.message || '').includes('duplicate') ? 'Ese VIN ya está registrado.' : error.message, 'error');
-      } else {
+      try {
+        let vehiculoId;
+        if (this.vEsEdicion) {
+          const { error } = await this.sb.from('vehiculos').update(fila).eq('id', f.id);
+          if (error) throw error;
+          vehiculoId = f.id;
+        } else {
+          fila.creado_por = this.user.id;
+          const { data, error } = await this.sb.from('vehiculos').insert(fila).select('id').single();
+          if (error) throw error;
+          vehiculoId = data.id;
+        }
+        await this.sincronizarAsignaciones(vehiculoId, f.asignaciones || []);
         this.vehOpen = false;
         this.avisar('Listo', this.vEsEdicion ? 'Vehículo actualizado.' : 'Vehículo agregado.');
         await this.cargarDatos();
         if (this.vEsEdicion) { const nv = this.vehiculos.find(x => x.id === f.id); if (nv) { this.vSel = nv; this.vehDetalleOpen = true; } }
+      } catch (e) {
+        this.avisar('Error', (e.message || '').includes('duplicate') ? 'Ese VIN ya está registrado.' : (e.message || 'No se pudo guardar.'), 'error');
       }
       this.guardandoVeh = false;
     },
@@ -1239,6 +1366,70 @@ function fleetApp() {
           this.avisar('Listo', 'Vehículo eliminado.');
           await this.cargarDatos();
         });
+    },
+
+    /* ══════ DRIVERS ══════ */
+    get driversFiltrados() {
+      const t = this.buscarDriverTxt.trim().toLowerCase();
+      if (!t) return this.drivers;
+      return this.drivers.filter(d => (d.nombre || '').toLowerCase().includes(t) || (d.telefono || '').includes(t));
+    },
+    abrirDriver(d = null) {
+      this.dEsEdicion = !!d;
+      this.dForm = d ? { id: d.id, nombre: d.nombre, telefono: d.telefono || '', nota: d.nota || '', user_id: d.user_id || '' } : { id: null, nombre: '', telefono: '', nota: '', user_id: '' };
+      this.driverOpen = true;
+    },
+    async guardarDriver() {
+      const f = this.dForm;
+      if (!f.nombre.trim()) { this.avisar('Falta el nombre', 'Ingresá el nombre del driver.', 'error'); return; }
+      this.guardandoDriver = true;
+      const fila = { nombre: f.nombre.trim(), telefono: this.nul(f.telefono), nota: this.nul(f.nota), user_id: f.user_id || null };
+      let error;
+      if (this.dEsEdicion) ({ error } = await this.sb.from('drivers').update(fila).eq('id', f.id));
+      else { fila.creado_por = this.user.id; ({ error } = await this.sb.from('drivers').insert(fila)); }
+      if (error) this.avisar('Error', error.message, 'error');
+      else { this.driverOpen = false; this.avisar('Listo', this.dEsEdicion ? 'Driver actualizado.' : 'Driver agregado.'); await this.cargarDatos(); }
+      this.guardandoDriver = false;
+    },
+    pedirBorrarDriver(d) {
+      const n = this.autosDeDriver(d.id).length;
+      this.confirmar('Eliminar driver', `Vas a eliminar a ${d.nombre}.${n > 0 ? ' Quedará desligado de ' + n + ' vehículo(s); los vehículos y sus gastos NO se borran.' : ''}`, async () => {
+        const { error } = await this.sb.from('drivers').delete().eq('id', d.id);
+        if (error) { this.avisar('Error', error.message, 'error'); return; }
+        this.avisar('Listo', 'Driver eliminado.');
+        await this.cargarDatos();
+      });
+    },
+    nombreDriver(id) { const d = this.drivers.find(x => x.id === id); return d ? d.nombre : '—'; },
+    driversDeVeh(vid) { return this.asignaciones.filter(a => a.vehiculo_id === vid); },
+    autosDeDriver(did) {
+      return this.asignaciones.filter(a => a.driver_id === did).map(a => {
+        const v = this.vehiculos.find(x => x.id === a.vehiculo_id);
+        return v ? { veh: v, principal: a.principal } : null;
+      }).filter(Boolean);
+    },
+    resumenDrivers(vid) {
+      const l = this.driversDeVeh(vid);
+      if (!l.length) return '—';
+      const n = l.map(a => this.nombreDriver(a.driver_id));
+      return n.length > 2 ? n.slice(0, 2).join(', ') + ' +' + (n.length - 2) : n.join(', ');
+    },
+    get driversNoEnForm() {
+      const ids = (this.vForm.asignaciones || []).map(a => a.driver_id);
+      return this.drivers.filter(d => !ids.includes(d.id));
+    },
+    agregarAsignacion() {
+      if (!this.vForm.nuevoDriver) { this.avisar('Elegí un driver', 'Seleccioná un driver de la lista.', 'error'); return; }
+      this.vForm.asignaciones.push({ driver_id: this.vForm.nuevoDriver, nombre: this.nombreDriver(this.vForm.nuevoDriver), principal: this.vForm.nuevoTipo === 'principal' });
+      this.vForm.nuevoDriver = ''; this.vForm.nuevoTipo = 'principal';
+    },
+    quitarAsignacion(driverId) { this.vForm.asignaciones = this.vForm.asignaciones.filter(a => a.driver_id !== driverId); },
+    async sincronizarAsignaciones(vehiculoId, asignaciones) {
+      await this.sb.from('vehiculo_drivers').delete().eq('vehiculo_id', vehiculoId);
+      if (asignaciones.length) {
+        const { error } = await this.sb.from('vehiculo_drivers').insert(asignaciones.map(a => ({ vehiculo_id: vehiculoId, driver_id: a.driver_id, principal: a.principal })));
+        if (error) this.avisar('Atención', 'El vehículo se guardó pero hubo un problema con los drivers: ' + error.message, 'error');
+      }
     },
 
     /* ══════ REPORTES ══════ */
