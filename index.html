@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Autos HWC · Control de Gastos</title>
+<title>Autos HWC</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -124,7 +124,7 @@
       </button>
       <button @click="go('historial')" :class="activeSection==='historial' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Historial de Gastos
+        <span x-text="user?.rol==='admin' ? 'Historial de Gastos' : 'Mis Gastos'"></span>
       </button>
       <button @click="go('vehiculos')" :class="activeSection==='vehiculos' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
@@ -181,7 +181,7 @@
       <section x-cloak x-show="activeSection==='dashboard'">
         <div class="mb-6">
           <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Hola, <span x-text="user?.nombre?.split(' ')[0]"></span> 👋</h1>
-          <p class="text-sm text-slate-500">Así va el día de hoy en la flota.</p>
+          <p class="text-sm text-slate-500" x-text="user?.rol==='admin' ? 'Así va el día de hoy en la flota.' : 'Tus gastos y tu actividad de hoy.'"></p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
@@ -191,12 +191,12 @@
             <p class="mt-1 text-[12px] text-slate-400"><span x-text="vehTaller"></span> en reparación · <span x-text="vehiculos.length"></span> en total</p>
           </div>
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500">Gastos de hoy</p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? 'Gastos de hoy' : 'Mis gastos de hoy'"></p>
             <p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(totalHoy)"></p>
             <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosHoyList.length"></span> registro(s) de hoy</p>
           </div>
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500">Gastos del mes</p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? 'Gastos del mes' : 'Mis gastos del mes'"></p>
             <p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(totalMes)"></p>
             <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosMes.length"></span> registro(s) este mes</p>
           </div>
@@ -219,7 +219,7 @@
 
         <div class="mt-4 grid gap-4 lg:grid-cols-3">
           <div class="card p-5 lg:col-span-2">
-            <h3 class="mb-4 text-sm font-bold text-slate-800">Evolución de gastos · últimos 6 meses</h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? 'Evolución de gastos · últimos 6 meses' : 'Mis gastos · últimos 6 meses'"></h3>
             <div class="relative h-56 sm:h-64"><canvas id="chMes"></canvas></div>
           </div>
           <div class="card p-5">
@@ -261,19 +261,19 @@
 
           <div class="card overflow-hidden lg:col-span-2">
             <div class="flex items-center justify-between px-5 py-4">
-              <h3 class="text-sm font-bold text-slate-800">Gastos de hoy</h3>
+              <h3 class="text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? 'Gastos de hoy' : 'Mis gastos de hoy'"></h3>
               <span class="badge bg-emerald-100 text-emerald-700" x-text="gastosHoyList.length + ' hoy'"></span>
             </div>
             <div class="overflow-x-auto">
               <table class="min-w-full divide-y divide-slate-100" x-show="gastosHoyList.length>0">
                 <thead class="bg-slate-50"><tr>
-                  <th class="th">Vehículo</th><th class="th">Empleado</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
+                  <th class="th">Vehículo</th><th x-show="user?.rol==='admin'" class="th">Empleado</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
                 </tr></thead>
                 <tbody class="divide-y divide-slate-100">
                   <template x-for="g in gastosHoyList" :key="g.id">
                     <tr @click="abrirDetalleGasto(g)" class="cursor-pointer hover:bg-slate-50">
                       <td class="td font-medium text-slate-900"><span x-text="g.modelo"></span> <span class="text-[11px] font-mono text-slate-400" x-text="g.vin ? '· '+g.vin.slice(-6) : ''"></span></td>
-                      <td class="td" x-text="g.empleado"></td>
+                      <td x-show="user?.rol==='admin'" class="td" x-text="g.empleado"></td>
                       <td class="td max-w-[180px] truncate" x-text="g.concepto"></td>
                       <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(g.monto)"></td>
                     </tr>
@@ -303,7 +303,9 @@
                 <span x-show="v.anio" class="badge bg-slate-100 text-slate-600" x-text="v.anio"></span>
                 <span x-show="v.ubicacion" class="badge bg-sky-100 text-sky-700" x-text="v.ubicacion"></span>
               </div>
-              <p class="mt-3 text-[13px] text-slate-500">Total gastado: <span class="font-bold text-slate-700" x-text="fmtMoney(gastoTotalVeh(v.id))"></span></p>
+              <p class="mt-3 text-[13px] text-slate-500">
+                <span x-text="user?.rol==='admin' ? 'Total gastado: ' : 'Mi gasto: '"></span><span class="font-bold text-slate-700" x-text="fmtMoney(gastoTotalVeh(v.id))"></span>
+              </p>
               <div class="mt-4 flex gap-2">
                 <button @click="abrirGasto(v.id)" class="btn-p flex-1">+ Gasto</button>
                 <button @click="abrirDetalleVeh(v)" class="btn-s">Ver</button>
@@ -321,7 +323,7 @@
       <!-- ══════ HISTORIAL ══════ -->
       <section x-cloak x-show="activeSection==='historial'">
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Historial de Gastos</h1>
+          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="user?.rol==='admin' ? 'Historial de Gastos' : 'Mis Gastos'"></h1>
           <button @click="limpiarHistorial()" class="btn-s">Limpiar filtros</button>
         </div>
 
@@ -401,7 +403,7 @@
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="bg-slate-50"><tr>
                 <th class="th">★</th><th class="th">VIN</th><th class="th">Modelo</th><th class="th">Placa</th>
-                <th class="th">Estado</th><th class="th">Conductores</th><th class="th text-right">Total gastado</th>
+                <th class="th">Estado</th><th class="th">Conductores</th><th class="th text-right" x-text="user?.rol==='admin' ? 'Total gastado' : 'Mi gasto'"></th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="v in vehTabla" :key="v.id">
@@ -489,8 +491,8 @@
             <p class="font-mono text-[12px] text-slate-400" x-text="vSel?.vin || ''"></p>
           </div>
           <div class="flex gap-4">
-            <div><p class="text-[11px] font-medium uppercase text-slate-400">Total</p><p class="text-lg font-bold text-slate-900" x-text="fmtMoney(totalVeh)"></p></div>
-            <div><p class="text-[11px] font-medium uppercase text-slate-400">Gastos</p><p class="text-lg font-bold text-slate-900" x-text="gastosVeh.length"></p></div>
+            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Total' : 'Mi total'"></p><p class="text-lg font-bold text-slate-900" x-text="fmtMoney(totalVeh)"></p></div>
+            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Gastos' : 'Mis gastos'"></p><p class="text-lg font-bold text-slate-900" x-text="gastosVeh.length"></p></div>
             <div><p class="text-[11px] font-medium uppercase text-slate-400">Último</p><p class="text-lg font-bold text-slate-900" x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : '—'"></p></div>
           </div>
         </div>
@@ -904,7 +906,7 @@
             </div>
           </div>
           <div class="card p-5">
-            <p class="text-[11px] font-medium uppercase text-slate-400">Total gastado</p>
+            <p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Total gastado' : 'Mi gasto en este auto'"></p>
             <p class="text-3xl font-bold text-slate-900" x-text="fmtMoney(gastoTotalVeh(vSel.id))"></p>
             <p class="mt-2 text-sm text-slate-500"><span x-text="gastosVeh.length"></span> gastos registrados</p>
             <p class="mt-1 text-sm text-slate-500" x-show="ultimoGastoVeh">Último: <span x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : ''"></span></p>
@@ -965,10 +967,11 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-//  CONFIGURACIÓN
+//  CONFIGURACIÓN 
 // ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://nfizwexpujbgdhyccycy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5maXp3ZXhwdWpiZ2RoeWNjeWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NTQzODYsImV4cCI6MjEwNjEzMDM4Nn0.lbyT9vaz9QAEfeho_vMC9XBfE6cNttzhe3rHkXSYeWY';
+
 
 function fleetApp() {
   return {
