@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Autos HWC</title>
+<title>Autos HWC · Expense Tracker</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -55,20 +55,24 @@
 
 <!-- ══════════ LOGIN ══════════ -->
 <div x-cloak x-show="!user" class="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-slate-950 p-4">
+  <button @click="cambiarLang()" class="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-slate-200 transition hover:bg-white/20">
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>
+    <span x-text="lang==='en' ? 'Español' : 'English'"></span>
+  </button>
   <div class="w-full max-w-sm py-8">
     <div class="mb-8 text-center">
       <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-2xl font-extrabold text-white shadow-lg shadow-emerald-500/30">A</div>
       <h1 class="text-2xl font-extrabold text-white">Autos <span class="text-emerald-400">HWC</span></h1>
-      <p class="mt-1 text-sm text-slate-400">Control de gastos mecánicos · HWC LLC</p>
+      <p class="mt-1 text-sm text-slate-400" x-text="t('login_sub')"></p>
     </div>
     <div class="card p-6 sm:p-7">
       <form @submit.prevent="login()" class="space-y-4">
         <div>
-          <label class="lbl">Email</label>
-          <input type="email" x-model="loginEmail" class="inp" placeholder="tu@correo.com" autocomplete="email">
+          <label class="lbl" x-text="t('email')"></label>
+          <input type="email" x-model="loginEmail" class="inp" :placeholder="t('ph_email')" autocomplete="email">
         </div>
         <div>
-          <label class="lbl">Contraseña</label>
+          <label class="lbl" x-text="t('password')"></label>
           <div class="relative">
             <input :type="showPass ? 'text' : 'password'" x-model="loginPass" class="inp pr-11" placeholder="••••••••" autocomplete="current-password">
             <button type="button" @click="showPass=!showPass" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -79,7 +83,7 @@
         </div>
         <button type="submit" class="btn-p w-full py-3" :disabled="cargandoLogin">
           <svg x-show="cargandoLogin" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
-          <span x-text="cargandoLogin ? 'Ingresando…' : 'Ingresar'"></span>
+          <span x-text="cargandoLogin ? t('logging_in') : t('btn_login')"></span>
         </button>
         <p x-cloak x-show="loginError" x-text="loginError" class="rounded-xl bg-rose-50 p-3 text-center text-sm text-rose-600"></p>
       </form>
@@ -99,7 +103,7 @@
       <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-lg font-extrabold text-white">A</div>
       <div>
         <p class="text-[15px] font-bold leading-tight text-white">Autos HWC</p>
-        <p class="text-[11px] text-slate-400">Control de gastos</p>
+        <p class="text-[11px] text-slate-400" x-text="t('app_tag')"></p>
       </div>
     </div>
 
@@ -109,53 +113,57 @@
       <div class="min-w-0">
         <p class="truncate text-sm font-semibold text-white" x-text="user?.nombre"></p>
         <span class="badge mt-0.5" :class="user?.rol==='admin' ? 'bg-rose-500/15 text-rose-300' : 'bg-emerald-500/15 text-emerald-300'"
-              x-text="user?.rol==='admin' ? 'Admin' : 'Empleado'"></span>
+              x-text="user?.rol==='admin' ? t('role_admin') : t('role_emp')"></span>
       </div>
     </div>
 
     <nav class="flex-1 space-y-1 overflow-y-auto px-3 pb-4">
       <button @click="go('dashboard')" :class="activeSection==='dashboard' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-        Dashboard
+        <span x-text="t('nav_dash')"></span>
       </button>
       <button @click="go('miscarros')" :class="activeSection==='miscarros' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
-        Mis Carros
+        <span x-text="t('nav_mycars')"></span>
       </button>
       <button @click="go('historial')" :class="activeSection==='historial' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span x-text="user?.rol==='admin' ? 'Historial de Gastos' : 'Mis Gastos'"></span>
+        <span x-text="user?.rol==='admin' ? t('nav_history') : t('nav_myexp')"></span>
       </button>
       <button @click="go('vehiculos')" :class="activeSection==='vehiculos' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-        Vehículos
+        <span x-text="t('nav_vehicles')"></span>
       </button>
 
       <div x-cloak x-show="user?.rol==='admin'" class="mt-4 space-y-1 border-t border-white/10 pt-4">
-        <p class="px-3.5 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">Administración</p>
+        <p class="px-3.5 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-500" x-text="t('admin_section')"></p>
         <button @click="go('drivers')" :class="activeSection==='drivers' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
           <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3 3 0 11-6 0 3 3 0 016 0zM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.5-1.632z"/></svg>
-          Drivers
+          <span x-text="t('nav_drivers')"></span>
         </button>
         <button @click="go('reportes')" :class="activeSection==='reportes' ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'" class="navitem">
           <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
-          Reportes
+          <span x-text="t('nav_reports')"></span>
         </button>
         <button @click="abrirVeh()" class="navitem text-slate-400 hover:bg-white/5 hover:text-white">
           <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Agregar Auto
+          <span x-text="t('nav_addcar')"></span>
         </button>
       </div>
     </nav>
 
     <div class="space-y-1 border-t border-white/10 p-3">
+      <button @click="cambiarLang()" class="navitem text-slate-400 hover:bg-white/5 hover:text-white">
+        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>
+        <span x-text="lang==='en' ? 'Español' : 'English'"></span>
+      </button>
       <button @click="refrescar()" class="navitem text-slate-400 hover:bg-white/5 hover:text-white">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-        Actualizar datos
+        <span x-text="t('refresh')"></span>
       </button>
       <button @click="logout()" class="navitem text-rose-400 hover:bg-rose-500/10 hover:text-rose-300">
         <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
-        Cerrar sesión
+        <span x-text="t('logout')"></span>
       </button>
     </div>
   </aside>
@@ -180,28 +188,28 @@
       <!-- ══════ DASHBOARD ══════ -->
       <section x-cloak x-show="activeSection==='dashboard'">
         <div class="mb-6">
-          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Hola, <span x-text="user?.nombre?.split(' ')[0]"></span> 👋</h1>
-          <p class="text-sm text-slate-500" x-text="user?.rol==='admin' ? 'Así va el día de hoy en la flota.' : 'Tus gastos y tu actividad de hoy.'"></p>
+          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl"><span x-text="t('dash_hello')"></span>, <span x-text="user?.nombre?.split(' ')[0]"></span> 👋</h1>
+          <p class="text-sm text-slate-500" x-text="user?.rol==='admin' ? t('dash_sub_admin') : t('dash_sub_emp')"></p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500">Vehículos activos</p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="t('kpi_active')"></p>
             <p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="vehActivos"></p>
-            <p class="mt-1 text-[12px] text-slate-400"><span x-text="vehTaller"></span> en reparación · <span x-text="vehiculos.length"></span> en total</p>
+            <p class="mt-1 text-[12px] text-slate-400"><span x-text="vehTaller"></span> <span x-text="t('kpi_in_repair')"></span> · <span x-text="vehiculos.length"></span> <span x-text="t('kpi_total')"></span></p>
           </div>
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? 'Gastos de hoy' : 'Mis gastos de hoy'"></p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? t('kpi_today') : t('kpi_my_today')"></p>
             <p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(totalHoy)"></p>
-            <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosHoyList.length"></span> registro(s) de hoy</p>
+            <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosHoyList.length"></span> <span x-text="t('kpi_rec_today')"></span></p>
           </div>
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? 'Gastos del mes' : 'Mis gastos del mes'"></p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="user?.rol==='admin' ? t('kpi_month') : t('kpi_my_month')"></p>
             <p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(totalMes)"></p>
-            <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosMes.length"></span> registro(s) este mes</p>
+            <p class="mt-1 text-[12px] text-slate-400"><span x-text="gastosMes.length"></span> <span x-text="t('kpi_rec_month')"></span></p>
           </div>
           <div class="card p-4 sm:p-5">
-            <p class="text-[12px] font-medium text-slate-500">vs. mes anterior</p>
+            <p class="text-[12px] font-medium text-slate-500" x-text="t('kpi_vs')"></p>
             <template x-if="deltaMes===null">
               <p class="mt-1 text-2xl font-bold text-slate-400 sm:text-3xl">—</p>
             </template>
@@ -213,17 +221,17 @@
                 <svg x-show="deltaMes<=0" class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
               </div>
             </template>
-            <p class="mt-1 text-[12px] text-slate-400">Mes pasado: <span x-text="fmtMoney(totalMesPrev)"></span></p>
+            <p class="mt-1 text-[12px] text-slate-400"><span x-text="t('kpi_last_month')"></span> <span x-text="fmtMoney(totalMesPrev)"></span></p>
           </div>
         </div>
 
         <div class="mt-4 grid gap-4 lg:grid-cols-3">
           <div class="card p-5 lg:col-span-2">
-            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? 'Evolución de gastos · últimos 6 meses' : 'Mis gastos · últimos 6 meses'"></h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? t('chart_6m') : t('chart_6m_my')"></h3>
             <div class="relative h-56 sm:h-64"><canvas id="chMes"></canvas></div>
           </div>
           <div class="card p-5">
-            <h3 class="mb-4 text-sm font-bold text-slate-800">Por categoría · este mes</h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="t('cat_month')"></h3>
             <div class="space-y-3">
               <template x-for="c in categoriasMes.slice(0,6)" :key="c.nombre">
                 <div>
@@ -236,14 +244,14 @@
                   </div>
                 </div>
               </template>
-              <p x-show="categoriasMes.length===0" class="py-6 text-center text-sm text-slate-400">Sin gastos este mes.</p>
+              <p x-show="categoriasMes.length===0" class="py-6 text-center text-sm text-slate-400" x-text="t('no_exp_month')"></p>
             </div>
           </div>
         </div>
 
         <div class="mt-4 grid gap-4 lg:grid-cols-3">
           <div class="card p-5">
-            <h3 class="mb-4 text-sm font-bold text-slate-800">⚠️ Vencimientos próximos</h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="t('alerts_title')"></h3>
             <div class="space-y-2.5">
               <template x-for="(a,i) in alertasVenc" :key="i">
                 <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-2.5">
@@ -252,22 +260,22 @@
                     <p class="text-[12px] text-slate-500"><span x-text="a.tipo"></span> · <span x-text="fmtFecha(a.fecha)"></span></p>
                   </div>
                   <span class="badge shrink-0" :class="a.dias<0 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'"
-                        x-text="a.dias<0 ? 'Vencido' : 'En '+a.dias+'d'"></span>
+                        x-text="a.dias<0 ? t('alert_expired') : t('alert_in').replace('{d}', a.dias)"></span>
                 </div>
               </template>
-              <p x-show="alertasVenc.length===0" class="py-6 text-center text-sm text-slate-400">Todo al día ✅</p>
+              <p x-show="alertasVenc.length===0" class="py-6 text-center text-sm text-slate-400" x-text="t('alerts_ok')"></p>
             </div>
           </div>
 
           <div class="card overflow-hidden lg:col-span-2">
             <div class="flex items-center justify-between px-5 py-4">
-              <h3 class="text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? 'Gastos de hoy' : 'Mis gastos de hoy'"></h3>
-              <span class="badge bg-emerald-100 text-emerald-700" x-text="gastosHoyList.length + ' hoy'"></span>
+              <h3 class="text-sm font-bold text-slate-800" x-text="user?.rol==='admin' ? t('today_table') : t('today_table_my')"></h3>
+              <span class="badge bg-emerald-100 text-emerald-700"><span x-text="gastosHoyList.length"></span> <span x-text="t('today')"></span></span>
             </div>
             <div class="overflow-x-auto">
               <table class="min-w-full divide-y divide-slate-100" x-show="gastosHoyList.length>0">
                 <thead class="bg-slate-50"><tr>
-                  <th class="th">Vehículo</th><th x-show="user?.rol==='admin'" class="th">Empleado</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
+                  <th class="th" x-text="t('th_vehicle')"></th><th x-show="user?.rol==='admin'" class="th" x-text="t('th_employee')"></th><th class="th" x-text="t('th_concept')"></th><th class="th text-right" x-text="t('th_amount')"></th>
                 </tr></thead>
                 <tbody class="divide-y divide-slate-100">
                   <template x-for="g in gastosHoyList" :key="g.id">
@@ -280,7 +288,7 @@
                   </template>
                 </tbody>
               </table>
-              <p x-show="gastosHoyList.length===0" class="px-5 py-8 text-center text-sm text-slate-400">Todavía no hay gastos cargados hoy.</p>
+              <p x-show="gastosHoyList.length===0" class="px-5 py-8 text-center text-sm text-slate-400" x-text="t('no_today')"></p>
             </div>
           </div>
         </div>
@@ -288,15 +296,15 @@
 
       <!-- ══════ MIS CARROS ══════ -->
       <section x-cloak x-show="activeSection==='miscarros'">
-        <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Mis Carros</h1>
-        <p class="mb-6 text-sm text-slate-500">Camionetas donde sos conductor (asignado o extra) o que marcaste con estrella.</p>
+        <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="t('nav_mycars')"></h1>
+        <p class="mb-6 text-sm text-slate-500" x-text="t('mycars_sub')"></p>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <template x-for="v in misCarros" :key="v.id">
             <div class="card relative p-5 transition hover:shadow-md">
               <button @click.stop="toggleFav(v.id)" class="absolute right-4 top-4 text-2xl leading-none transition"
                       :class="esFav(v.id) ? 'text-amber-400' : 'text-slate-200 hover:text-slate-400'">★</button>
               <h3 class="pr-8 text-lg font-bold text-slate-900" x-text="v.modelo"></h3>
-              <p class="mt-0.5 break-all font-mono text-[11px] text-slate-400" x-text="v.vin || 'sin VIN'"></p>
+              <p class="mt-0.5 break-all font-mono text-[11px] text-slate-400"><span x-text="v.vin || t('no_vin')"></span></p>
               <div class="mt-3 flex flex-wrap items-center gap-1.5">
                 <span class="badge" :class="estadoCls(v.estado)" x-text="estadoTxt(v.estado)"></span>
                 <span x-show="v.placa" class="badge bg-slate-100 text-slate-600" x-text="v.placa"></span>
@@ -304,18 +312,18 @@
                 <span x-show="v.ubicacion" class="badge bg-sky-100 text-sky-700" x-text="v.ubicacion"></span>
               </div>
               <p class="mt-3 text-[13px] text-slate-500">
-                <span x-text="user?.rol==='admin' ? 'Total gastado: ' : 'Mi gasto: '"></span><span class="font-bold text-slate-700" x-text="fmtMoney(gastoTotalVeh(v.id))"></span>
+                <span x-text="user?.rol==='admin' ? t('total_spent') : t('my_spent')"></span><span class="font-bold text-slate-700" x-text="fmtMoney(gastoTotalVeh(v.id))"></span>
               </p>
               <div class="mt-4 flex gap-2">
-                <button @click="abrirGasto(v.id)" class="btn-p flex-1">+ Gasto</button>
-                <button @click="abrirDetalleVeh(v)" class="btn-s">Ver</button>
+                <button @click="abrirGasto(v.id)" class="btn-p flex-1" x-text="t('add_expense')"></button>
+                <button @click="abrirDetalleVeh(v)" class="btn-s" x-text="t('view')"></button>
               </div>
             </div>
           </template>
           <div x-show="misCarros.length===0" class="card col-span-full border-dashed p-10 text-center">
             <p class="text-4xl">🚗</p>
-            <p class="mt-3 font-semibold text-slate-700">No tenés camionetas acá</p>
-            <p class="mt-1 text-sm text-slate-500">Marcá las tuyas con la estrella ★ en "Vehículos", o pedí que te agreguen como driver.</p>
+            <p class="mt-3 font-semibold text-slate-700" x-text="t('mycars_empty_t')"></p>
+            <p class="mt-1 text-sm text-slate-500" x-text="t('mycars_empty_s')"></p>
           </div>
         </div>
       </section>
@@ -323,25 +331,25 @@
       <!-- ══════ HISTORIAL ══════ -->
       <section x-cloak x-show="activeSection==='historial'">
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="user?.rol==='admin' ? 'Historial de Gastos' : 'Mis Gastos'"></h1>
-          <button @click="limpiarHistorial()" class="btn-s">Limpiar filtros</button>
+          <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="user?.rol==='admin' ? t('nav_history') : t('nav_myexp')"></h1>
+          <button @click="limpiarHistorial()" class="btn-s" x-text="t('clear_filters')"></button>
         </div>
 
         <div class="card mb-4 p-4">
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <input x-model="fVeh" @input="page=1" class="inp" placeholder="Vehículo / VIN…">
-            <input x-model="fConcepto" @input="page=1" class="inp" placeholder="Concepto…">
+            <input x-model="fVeh" @input="page=1" class="inp" :placeholder="t('ph_search_veh')">
+            <input x-model="fConcepto" @input="page=1" class="inp" :placeholder="t('ph_concept')">
             <select x-model="fCategoria" @change="page=1" class="inp">
-              <option value="">Todas las categorías</option>
+              <option value="" x-text="t('all_categories')"></option>
               <template x-for="c in categorias" :key="c.id"><option :value="c.id" x-text="c.nombre"></option></template>
             </select>
             <select x-show="user?.rol==='admin'" x-model="fEmpleado" @change="page=1" class="inp">
-              <option value="">Todos los empleados</option>
+              <option value="" x-text="t('all_employees')"></option>
               <template x-for="p in perfiles" :key="p.id"><option :value="p.id" x-text="p.nombre"></option></template>
             </select>
             <input type="date" x-model="fFecha" @change="page=1" class="inp">
             <div class="flex items-center rounded-xl bg-slate-50 px-4 text-sm font-semibold text-slate-700">
-              Total: <span class="ml-1.5 text-emerald-700" x-text="fmtMoney(gastosFiltrados.reduce((s,g)=>s+ +g.monto,0))"></span>
+              <span x-text="t('total')"></span> <span class="ml-1.5 text-emerald-700" x-text="fmtMoney(gastosFiltrados.reduce((s,g)=>s+ +g.monto,0))"></span>
             </div>
           </div>
         </div>
@@ -350,9 +358,9 @@
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="bg-slate-50"><tr>
-                <th class="th">Fecha</th><th class="th">Vehículo</th>
-                <th x-show="user?.rol==='admin'" class="th">Empleado</th>
-                <th class="th">Categoría</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
+                <th class="th" x-text="t('th_date')"></th><th class="th" x-text="t('th_vehicle')"></th>
+                <th x-show="user?.rol==='admin'" class="th" x-text="t('th_employee')"></th>
+                <th class="th" x-text="t('th_category')"></th><th class="th" x-text="t('th_concept')"></th><th class="th text-right" x-text="t('th_amount')"></th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="g in gastosPagina" :key="g.id">
@@ -368,15 +376,15 @@
                     <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(g.monto)"></td>
                   </tr>
                 </template>
-                <tr x-show="gastosPagina.length===0"><td :colspan="user?.rol==='admin' ? 6 : 5" class="px-4 py-10 text-center text-sm text-slate-400">No hay gastos con estos filtros.</td></tr>
+                <tr x-show="gastosPagina.length===0"><td :colspan="user?.rol==='admin' ? 6 : 5" class="px-4 py-10 text-center text-sm text-slate-400" x-text="t('no_results_filters')"></td></tr>
               </tbody>
             </table>
           </div>
           <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 p-4 sm:flex-row">
-            <p class="text-[13px] text-slate-500">Mostrando <span x-text="gastosPagina.length"></span> de <span x-text="gastosFiltrados.length"></span> gastos</p>
+            <p class="text-[13px] text-slate-500"><span x-text="t('showing')"></span> <span x-text="gastosPagina.length"></span> <span x-text="t('of')"></span> <span x-text="gastosFiltrados.length"></span> <span x-text="t('expenses_word')"></span></p>
             <div class="flex items-center gap-2">
               <button @click="page=Math.max(1,page-1)" :disabled="page===1" class="btn-s px-3 py-2">←</button>
-              <span class="text-[13px] text-slate-600">Pág. <span x-text="page"></span> de <span x-text="totalPaginas"></span></span>
+              <span class="text-[13px] text-slate-600"><span x-text="t('page')"></span> <span x-text="page"></span> <span x-text="t('of')"></span> <span x-text="totalPaginas"></span></span>
               <button @click="page=Math.min(totalPaginas,page+1)" :disabled="page>=totalPaginas" class="btn-s px-3 py-2">→</button>
             </div>
           </div>
@@ -387,23 +395,23 @@
       <section x-cloak x-show="activeSection==='vehiculos'">
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Vehículos</h1>
-            <p class="text-sm text-slate-500"><span x-text="vehiculos.length"></span> vehículos · <span x-text="vehActivos"></span> activos</p>
+            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="t('nav_vehicles')"></h1>
+            <p class="text-sm text-slate-500"><span x-text="vehiculos.length"></span> <span x-text="t('word_vehicles')"></span> · <span x-text="vehActivos"></span> <span x-text="t('word_active')"></span></p>
           </div>
-          <button x-show="user?.rol==='admin'" @click="abrirVeh()" class="btn-p">+ Agregar auto</button>
+          <button x-show="user?.rol==='admin'" @click="abrirVeh()" class="btn-p" x-text="t('add_vehicle')"></button>
         </div>
         <div class="card mb-4 p-4">
           <div class="relative">
             <svg class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-            <input x-model="buscarVeh" class="inp pl-11" placeholder="Buscar por modelo, VIN, placa, title o conductor…">
+            <input x-model="buscarVeh" class="inp pl-11" :placeholder="t('search_veh_ph')">
           </div>
         </div>
         <div class="card overflow-hidden">
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="bg-slate-50"><tr>
-                <th class="th">★</th><th class="th">VIN</th><th class="th">Modelo</th><th class="th">Placa</th>
-                <th class="th">Estado</th><th class="th">Conductores</th><th class="th text-right" x-text="user?.rol==='admin' ? 'Total gastado' : 'Mi gasto'"></th>
+                <th class="th">★</th><th class="th">VIN</th><th class="th" x-text="t('th_model')"></th><th class="th" x-text="t('th_plate')"></th>
+                <th class="th" x-text="t('th_state')"></th><th class="th" x-text="t('th_drivers')"></th><th class="th text-right" x-text="user?.rol==='admin' ? t('th_total_spent') : t('th_my_spent')"></th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="v in vehTabla" :key="v.id">
@@ -422,7 +430,7 @@
                     <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(gastoTotalVeh(v.id))"></td>
                   </tr>
                 </template>
-                <tr x-show="vehTabla.length===0"><td colspan="7" class="px-4 py-10 text-center text-sm text-slate-400">Sin resultados.</td></tr>
+                <tr x-show="vehTabla.length===0"><td colspan="7" class="px-4 py-10 text-center text-sm text-slate-400" x-text="t('no_results')"></td></tr>
               </tbody>
             </table>
           </div>
@@ -433,13 +441,13 @@
       <section x-cloak x-show="activeSection==='drivers'">
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Drivers</h1>
-            <p class="text-sm text-slate-500"><span x-text="drivers.length"></span> conductores registrados</p>
+            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="t('nav_drivers')"></h1>
+            <p class="text-sm text-slate-500"><span x-text="drivers.length"></span> <span x-text="t('word_drivers_reg')"></span></p>
           </div>
-          <button @click="abrirDriver()" class="btn-p">+ Nuevo driver</button>
+          <button @click="abrirDriver()" class="btn-p" x-text="t('new_driver')"></button>
         </div>
         <div class="card mb-4 p-4">
-          <input x-model="buscarDriverTxt" class="inp" placeholder="Buscar por nombre o teléfono…">
+          <input x-model="buscarDriverTxt" class="inp" :placeholder="t('search_driver_ph')">
         </div>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <template x-for="d in driversFiltrados" :key="d.id">
@@ -450,31 +458,31 @@
                   <a x-show="d.telefono" :href="'tel:'+(d.telefono||'')" class="text-sm font-medium text-emerald-700 hover:underline" x-text="d.telefono"></a>
                 </div>
                 <div class="flex shrink-0 gap-1">
-                  <button @click="abrirDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-600" title="Editar">
+                  <button @click="abrirDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-600" :title="t('edit')">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
                   </button>
-                  <button @click="pedirBorrarDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600" title="Eliminar">
+                  <button @click="pedirBorrarDriver(d)" class="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600" :title="t('delete')">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                   </button>
                 </div>
               </div>
               <p x-show="d.nota" class="mt-2 text-[13px] text-slate-500" x-text="d.nota"></p>
               <div class="mt-3 border-t border-slate-100 pt-3">
-                <p class="text-[11px] font-semibold uppercase text-slate-400">Vehículos</p>
+                <p class="text-[11px] font-semibold uppercase text-slate-400" x-text="t('vehicles_word')"></p>
                 <div class="mt-1.5 flex flex-wrap gap-1.5">
                   <template x-for="(a,i) in autosDeDriver(d.id)" :key="i">
                     <button @click="abrirDetalleVeh(a.veh)" class="badge hover:brightness-95" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
-                      <span x-text="a.veh.modelo"></span> · <span x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+                      <span x-text="a.veh.modelo"></span> · <span x-text="a.principal ? t('assigned') : t('extra')"></span>
                     </button>
                   </template>
-                  <p x-show="autosDeDriver(d.id).length===0" class="text-[13px] text-slate-400">Sin camionetas</p>
+                  <p x-show="autosDeDriver(d.id).length===0" class="text-[13px] text-slate-400" x-text="t('no_trucks')"></p>
                 </div>
               </div>
             </div>
           </template>
           <div x-show="driversFiltrados.length===0" class="card col-span-full border-dashed p-10 text-center">
-            <p class="font-semibold text-slate-700">Todavía no hay drivers</p>
-            <p class="mt-1 text-sm text-slate-500">Creá el primero con el botón "+ Nuevo driver".</p>
+            <p class="font-semibold text-slate-700" x-text="t('drivers_empty_t')"></p>
+            <p class="mt-1 text-sm text-slate-500" x-text="t('drivers_empty_s')"></p>
           </div>
         </div>
       </section>
@@ -483,7 +491,7 @@
       <section x-cloak x-show="activeSection==='vehHistorial'">
         <button @click="go('vehiculos')" class="mb-4 flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
-          Volver a vehículos
+          <span x-text="t('back_vehicles')"></span>
         </button>
         <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -491,15 +499,15 @@
             <p class="font-mono text-[12px] text-slate-400" x-text="vSel?.vin || ''"></p>
           </div>
           <div class="flex gap-4">
-            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Total' : 'Mi total'"></p><p class="text-lg font-bold text-slate-900" x-text="fmtMoney(totalVeh)"></p></div>
-            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Gastos' : 'Mis gastos'"></p><p class="text-lg font-bold text-slate-900" x-text="gastosVeh.length"></p></div>
-            <div><p class="text-[11px] font-medium uppercase text-slate-400">Último</p><p class="text-lg font-bold text-slate-900" x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : '—'"></p></div>
+            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? t('total_word') : t('my_total')"></p><p class="text-lg font-bold text-slate-900" x-text="fmtMoney(totalVeh)"></p></div>
+            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? t('expenses_word2') : t('my_expenses')"></p><p class="text-lg font-bold text-slate-900" x-text="gastosVeh.length"></p></div>
+            <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('last')"></p><p class="text-lg font-bold text-slate-900" x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : '—'"></p></div>
           </div>
         </div>
         <div class="card mb-4 p-4" x-show="user?.rol==='admin'">
           <div class="grid gap-3 sm:grid-cols-2">
             <select x-model="fvEmpleado" @change="pageV=1" class="inp">
-              <option value="">Todos los empleados</option>
+              <option value="" x-text="t('all_employees')"></option>
               <template x-for="p in perfiles" :key="p.id"><option :value="p.id" x-text="p.nombre"></option></template>
             </select>
             <input type="date" x-model="fvFecha" @change="pageV=1" class="inp">
@@ -509,8 +517,8 @@
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="bg-slate-50"><tr>
-                <th class="th">Fecha</th><th x-show="user?.rol==='admin'" class="th">Empleado</th>
-                <th class="th">Categoría</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
+                <th class="th" x-text="t('th_date')"></th><th x-show="user?.rol==='admin'" class="th" x-text="t('th_employee')"></th>
+                <th class="th" x-text="t('th_category')"></th><th class="th" x-text="t('th_concept')"></th><th class="th text-right" x-text="t('th_amount')"></th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="g in gastosVehPagina" :key="g.id">
@@ -522,15 +530,15 @@
                     <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(g.monto)"></td>
                   </tr>
                 </template>
-                <tr x-show="gastosVehPagina.length===0"><td :colspan="user?.rol==='admin' ? 5 : 4" class="px-4 py-10 text-center text-sm text-slate-400">Sin gastos registrados.</td></tr>
+                <tr x-show="gastosVehPagina.length===0"><td :colspan="user?.rol==='admin' ? 5 : 4" class="px-4 py-10 text-center text-sm text-slate-400" x-text="t('no_expenses_veh')"></td></tr>
               </tbody>
             </table>
           </div>
           <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 p-4 sm:flex-row">
-            <p class="text-[13px] text-slate-500"><span x-text="gastosVehFiltrados.length"></span> gastos en total</p>
+            <p class="text-[13px] text-slate-500"><span x-text="gastosVehFiltrados.length"></span> <span x-text="t('expenses_total')"></span></p>
             <div class="flex items-center gap-2">
               <button @click="pageV=Math.max(1,pageV-1)" :disabled="pageV===1" class="btn-s px-3 py-2">←</button>
-              <span class="text-[13px] text-slate-600">Pág. <span x-text="pageV"></span> de <span x-text="paginasV"></span></span>
+              <span class="text-[13px] text-slate-600"><span x-text="t('page')"></span> <span x-text="pageV"></span> <span x-text="t('of')"></span> <span x-text="paginasV"></span></span>
               <button @click="pageV=Math.min(paginasV,pageV+1)" :disabled="pageV>=paginasV" class="btn-s px-3 py-2">→</button>
             </div>
           </div>
@@ -541,8 +549,8 @@
       <section x-cloak x-show="activeSection==='reportes'">
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">Reportes</h1>
-            <p class="text-sm text-slate-500">Gastos mecánicos · HWC LLC</p>
+            <h1 class="text-xl font-bold text-slate-900 sm:text-2xl" x-text="t('nav_reports')"></h1>
+            <p class="text-sm text-slate-500" x-text="t('reports_sub')"></p>
           </div>
           <div class="flex gap-2">
             <button @click="exportExcel()" class="btn bg-emerald-600 text-white hover:bg-emerald-700">Excel</button>
@@ -553,12 +561,12 @@
         <div class="card mb-4 p-4">
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <select x-model="repTipo" @change="generarReportes()" class="inp">
-              <option value="general">General (todo)</option>
-              <option value="vehiculo">Por vehículo</option>
-              <option value="empleado">Por empleado</option>
+              <option value="general" x-text="t('rep_general')"></option>
+              <option value="vehiculo" x-text="t('rep_by_veh')"></option>
+              <option value="empleado" x-text="t('rep_by_emp')"></option>
             </select>
             <div x-cloak x-show="repTipo==='vehiculo'">
-              <input x-model="repBusco" @input="buscarRepVeh()" class="inp" placeholder="Buscar auto…">
+              <input x-model="repBusco" @input="buscarRepVeh()" class="inp" :placeholder="t('search_vehicle')">
               <div x-show="repBusco && !repSelVeh" class="mt-1 max-h-40 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
                 <template x-for="v in repOpciones" :key="v.id">
                   <button @click="elegirRepVeh(v)" class="block w-full px-3.5 py-2.5 text-left text-sm hover:bg-emerald-50"><span class="font-medium" x-text="v.modelo"></span> <span class="text-slate-400" x-text="v.vin"></span></button>
@@ -566,48 +574,48 @@
               </div>
             </div>
             <div x-cloak x-show="repTipo==='empleado'">
-              <input x-model="repEmpBusco" @input="buscarRepEmp()" class="inp" placeholder="Buscar empleado…">
+              <input x-model="repEmpBusco" @input="buscarRepEmp()" class="inp" :placeholder="t('search_employee')">
               <div x-show="repEmpBusco && !repSelEmp" class="mt-1 max-h-40 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
                 <template x-for="p in repEmpOpciones" :key="p.id">
                   <button @click="elegirRepEmp(p)" class="block w-full px-3.5 py-2.5 text-left text-sm hover:bg-emerald-50" x-text="p.nombre"></button>
                 </template>
               </div>
             </div>
-            <input type="date" x-model="repIni" @change="generarReportes()" class="inp" title="Desde">
-            <input type="date" x-model="repFin" @change="generarReportes()" class="inp" title="Hasta">
+            <input type="date" x-model="repIni" @change="generarReportes()" class="inp" :title="t('from')">
+            <input type="date" x-model="repFin" @change="generarReportes()" class="inp" :title="t('until')">
           </div>
           <div class="mt-3 flex justify-end border-t border-slate-100 pt-3">
-            <button @click="limpiarReportes()" class="btn-s">Limpiar filtros</button>
+            <button @click="limpiarReportes()" class="btn-s" x-text="t('clear_filters')"></button>
           </div>
         </div>
 
         <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500">Total gastado</p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(repRes.total)"></p></div>
-          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500">N° de registros</p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="repRes.count"></p></div>
-          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500">Promedio por gasto</p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(repRes.count ? repRes.total/repRes.count : 0)"></p></div>
+          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500" x-text="t('rep_total')"></p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(repRes.total)"></p></div>
+          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500" x-text="t('rep_count')"></p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="repRes.count"></p></div>
+          <div class="card p-5"><p class="text-[12px] font-medium text-slate-500" x-text="t('rep_avg')"></p><p class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl" x-text="fmtMoney(repRes.count ? repRes.total/repRes.count : 0)"></p></div>
         </div>
 
         <div x-cloak x-show="repTipo==='general'" class="mb-4 grid gap-4 lg:grid-cols-2">
           <div class="card p-5">
-            <h3 class="mb-4 text-sm font-bold text-slate-800">Top 5 · autos que más gastaron</h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="t('top5_veh')"></h3>
             <div class="relative h-64"><canvas id="chRepVeh"></canvas></div>
           </div>
           <div class="card p-5">
-            <h3 class="mb-4 text-sm font-bold text-slate-800">Top 5 · empleados que más registran</h3>
+            <h3 class="mb-4 text-sm font-bold text-slate-800" x-text="t('top5_emp')"></h3>
             <div class="relative h-64"><canvas id="chRepEmp"></canvas></div>
           </div>
         </div>
 
         <div class="card overflow-hidden">
           <div class="flex items-center justify-between px-5 py-4">
-            <h3 class="text-sm font-bold text-slate-800">Detalle</h3>
-            <span class="text-[13px] text-slate-500" x-text="repGastos.length + ' registros'"></span>
+            <h3 class="text-sm font-bold text-slate-800" x-text="t('detail')"></h3>
+            <span class="text-[13px] text-slate-500"><span x-text="repGastos.length"></span> <span x-text="t('records_word')"></span></span>
           </div>
           <div class="overflow-x-auto" style="max-height:460px">
             <table class="min-w-full divide-y divide-slate-100">
               <thead class="sticky top-0 bg-slate-50"><tr>
-                <th class="th">Fecha</th><th class="th">Vehículo</th><th class="th">Empleado</th>
-                <th class="th">Categoría</th><th class="th">Concepto</th><th class="th text-right">Monto</th>
+                <th class="th" x-text="t('th_date')"></th><th class="th" x-text="t('th_vehicle')"></th><th class="th" x-text="t('th_employee')"></th>
+                <th class="th" x-text="t('th_category')"></th><th class="th" x-text="t('th_concept')"></th><th class="th text-right" x-text="t('th_amount')"></th>
               </tr></thead>
               <tbody class="divide-y divide-slate-100">
                 <template x-for="g in repPaginaDatos" :key="g.id">
@@ -620,15 +628,15 @@
                     <td class="td text-right font-bold text-slate-900" x-text="fmtMoney(g.monto)"></td>
                   </tr>
                 </template>
-                <tr x-show="repPaginaDatos.length===0"><td colspan="6" class="px-4 py-10 text-center text-sm text-slate-400">No hay registros con estos filtros.</td></tr>
+                <tr x-show="repPaginaDatos.length===0"><td colspan="6" class="px-4 py-10 text-center text-sm text-slate-400" x-text="t('no_records')"></td></tr>
               </tbody>
             </table>
           </div>
           <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 p-4 sm:flex-row">
-            <p class="text-[13px] text-slate-500">Mostrando <span x-text="repPaginaDatos.length"></span> de <span x-text="repGastos.length"></span></p>
+            <p class="text-[13px] text-slate-500"><span x-text="t('showing')"></span> <span x-text="repPaginaDatos.length"></span> <span x-text="t('of')"></span> <span x-text="repGastos.length"></span></p>
             <div class="flex items-center gap-2">
               <button @click="repPage=Math.max(1,repPage-1)" :disabled="repPage===1" class="btn-s px-3 py-2">←</button>
-              <span class="text-[13px] text-slate-600">Pág. <span x-text="repPage"></span> de <span x-text="repPaginas"></span></span>
+              <span class="text-[13px] text-slate-600"><span x-text="t('page')"></span> <span x-text="repPage"></span> <span x-text="t('of')"></span> <span x-text="repPaginas"></span></span>
               <button @click="repPage=Math.min(repPaginas,repPage+1)" :disabled="repPage>=repPaginas" class="btn-s px-3 py-2">→</button>
             </div>
           </div>
@@ -648,7 +656,7 @@
 <!-- ══════════ MODAL: CREAR / EDITAR GASTO ══════════ -->
 <div x-cloak x-show="gastoOpen" class="fixed inset-0 z-50 overflow-y-auto bg-white">
   <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3.5 sm:px-6">
-    <h2 class="text-lg font-bold text-slate-900" x-text="gEsEdicion ? 'Editar gasto' : 'Cargar nuevo gasto'"></h2>
+    <h2 class="text-lg font-bold text-slate-900" x-text="gEsEdicion ? t('edit_expense') : t('new_expense')"></h2>
     <button @click="gastoOpen=false" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
       <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
@@ -656,15 +664,15 @@
   <div class="mx-auto max-w-2xl p-4 sm:p-6">
     <div class="space-y-5">
       <div>
-        <label class="lbl">1 · Vehículo</label>
+        <label class="lbl" x-text="t('step1_vehicle')"></label>
         <template x-if="!gEsEdicion">
           <div>
-            <input x-model="gBusco" @input="buscarVehOpciones()" class="inp" placeholder="Modelo, VIN o placa…" :disabled="!!gForm.vehiculo_id">
+            <input x-model="gBusco" @input="buscarVehOpciones()" class="inp" :placeholder="t('ph_search_veh_fab')" :disabled="!!gForm.vehiculo_id">
             <div x-show="gOpciones.length>0" class="mt-2 max-h-52 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
               <template x-for="v in gOpciones" :key="v.id">
                 <button @click="elegirVeh(v)" class="block w-full px-4 py-3 text-left hover:bg-emerald-50">
                   <p class="text-sm font-semibold text-slate-800" x-text="v.modelo"></p>
-                  <p class="text-[12px] text-slate-400" x-text="'VIN: '+(v.vin||'—')+(v.placa ? ' · Placa: '+v.placa : '')"></p>
+                  <p class="text-[12px] text-slate-400" x-text="'VIN: '+(v.vin||'—')+(v.placa ? ' · '+t('plate_colon')+v.placa : '')"></p>
                 </button>
               </template>
             </div>
@@ -673,57 +681,57 @@
         <template x-if="gEsEdicion || gForm.vehiculo_id">
           <div class="flex items-center justify-between rounded-xl bg-emerald-50 px-4 py-3">
             <div>
-              <p class="text-[11px] font-semibold uppercase text-emerald-600">Vehículo seleccionado</p>
+              <p class="text-[11px] font-semibold uppercase text-emerald-600" x-text="t('vehicle_selected')"></p>
               <p class="text-sm font-bold text-emerald-800" x-text="gBusco"></p>
             </div>
-            <button x-show="!gEsEdicion" @click="gForm.vehiculo_id=null; gBusco=''; gOpciones=[]" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700">Cambiar</button>
+            <button x-show="!gEsEdicion" @click="gForm.vehiculo_id=null; gBusco=''; gOpciones=[]" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700" x-text="t('change')"></button>
           </div>
         </template>
       </div>
 
       <div class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2">
         <div>
-          <label class="lbl">Monto (USD) *</label>
+          <label class="lbl" x-text="t('amount_usd')"></label>
           <input type="number" step="0.01" min="0" x-model="gForm.monto" class="inp" placeholder="0.00">
         </div>
         <div>
-          <label class="lbl">Fecha del gasto *</label>
+          <label class="lbl" x-text="t('expense_date')"></label>
           <input type="date" x-model="gForm.fecha" class="inp">
         </div>
         <div>
-          <label class="lbl">Categoría</label>
+          <label class="lbl" x-text="t('category')"></label>
           <select x-model="gForm.categoria_id" class="inp">
-            <option value="">Sin categoría</option>
+            <option value="" x-text="t('no_category')"></option>
             <template x-for="c in categorias" :key="c.id"><option :value="c.id" x-text="c.nombre"></option></template>
           </select>
         </div>
         <div>
-          <label class="lbl">Odómetro / millas</label>
-          <input type="number" min="0" x-model="gForm.odometro" class="inp" placeholder="Opcional">
+          <label class="lbl" x-text="t('odometer')"></label>
+          <input type="number" min="0" x-model="gForm.odometro" class="inp" :placeholder="t('optional')">
         </div>
         <div class="sm:col-span-2">
-          <label class="lbl">Concepto *</label>
-          <input x-model="gForm.concepto" class="inp" placeholder="Ej: cambio de aceite y filtro">
+          <label class="lbl" x-text="t('concept')"></label>
+          <input x-model="gForm.concepto" class="inp" :placeholder="t('ph_concept2')">
         </div>
       </div>
 
       <div class="border-t border-slate-100 pt-5">
-        <label class="lbl">Foto de la factura</label>
+        <label class="lbl" x-text="t('receipt_photo')"></label>
         <div class="flex items-center gap-4">
           <label class="btn-s cursor-pointer">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>
-            <span x-text="gEsEdicion ? 'Reemplazar foto' : 'Elegir foto'"></span>
+            <span x-text="gEsEdicion ? t('replace_photo') : t('choose_photo')"></span>
             <input type="file" accept="image/*" @change="elegirFoto($event)" class="hidden">
           </label>
           <img x-show="fotoPreview" :src="fotoPreview" class="h-20 w-20 rounded-xl border border-slate-200 object-cover">
-          <p x-show="gEsEdicion && !fotoPreview" class="text-[12px] text-slate-400">Dejala vacía para conservar la actual.</p>
+          <p x-show="gEsEdicion && !fotoPreview" class="text-[12px] text-slate-400" x-text="t('keep_photo')"></p>
         </div>
-        <p x-show="comprimiendo" class="mt-2 text-[13px] text-emerald-600">Procesando imagen…</p>
+        <p x-show="comprimiendo" class="mt-2 text-[13px] text-emerald-600" x-text="t('processing_img')"></p>
       </div>
 
       <button @click="guardarGasto()" :disabled="guardando" class="btn-p w-full py-3.5">
         <svg x-show="guardando" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
-        <span x-text="guardando ? 'Guardando…' : 'Guardar gasto'"></span>
+        <span x-text="guardando ? t('saving') : t('save_expense')"></span>
       </button>
     </div>
   </div>
@@ -732,7 +740,7 @@
 <!-- ══════════ MODAL: DETALLE DE GASTO ══════════ -->
 <div x-cloak x-show="gastoDetalleOpen" class="fixed inset-0 z-50 overflow-y-auto bg-white">
   <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3.5 sm:px-6">
-    <h2 class="text-lg font-bold text-slate-900">Detalle del gasto</h2>
+    <h2 class="text-lg font-bold text-slate-900" x-text="t('expense_detail')"></h2>
     <button @click="gastoDetalleOpen=false" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
       <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
@@ -744,25 +752,25 @@
           <h3 class="text-2xl font-bold text-slate-900" x-text="gSel.concepto"></h3>
           <p class="mt-1 text-sm text-slate-500" x-text="fmtFecha(gSel.fecha)"></p>
           <div class="mt-4 space-y-3 rounded-2xl bg-slate-50 p-4 text-sm">
-            <p><span class="font-medium text-slate-500">Vehículo:</span> <span class="font-semibold text-slate-800" x-text="gSel.modelo + (gSel.vin ? ' · '+gSel.vin : '')"></span></p>
-            <p><span class="font-medium text-slate-500">Cargado por:</span> <span x-text="gSel.empleado"></span></p>
-            <p x-show="gSel.categoria"><span class="font-medium text-slate-500">Categoría:</span> <span class="badge" :class="catColor(gSel.categoria)" x-text="gSel.categoria"></span></p>
-            <p x-show="gSel.odometro"><span class="font-medium text-slate-500">Odómetro:</span> <span x-text="gSel.odometro + ' mi'"></span></p>
-            <p><span class="font-medium text-slate-500">Monto:</span> <span class="text-xl font-bold text-emerald-600" x-text="fmtMoney(gSel.monto)"></span></p>
+            <p><span class="font-medium text-slate-500" x-text="t('th_vehicle') + ':'"></span> <span class="font-semibold text-slate-800" x-text="gSel.modelo + (gSel.vin ? ' · '+gSel.vin : '')"></span></p>
+            <p><span class="font-medium text-slate-500" x-text="t('loaded_by') + ':'"></span> <span x-text="gSel.empleado"></span></p>
+            <p x-show="gSel.categoria"><span class="font-medium text-slate-500" x-text="t('category') + ':'"></span> <span class="badge" :class="catColor(gSel.categoria)" x-text="gSel.categoria"></span></p>
+            <p x-show="gSel.odometro"><span class="font-medium text-slate-500" x-text="t('odometer') + ':'"></span> <span x-text="gSel.odometro + ' mi'"></span></p>
+            <p><span class="font-medium text-slate-500" x-text="t('th_amount') + ':'"></span> <span class="text-xl font-bold text-emerald-600" x-text="fmtMoney(gSel.monto)"></span></p>
           </div>
           <div class="mt-5 flex flex-wrap gap-3">
-            <button x-show="user && (user.id===gSel.usuario_id || user.rol==='admin')" @click="editarGastoDesdeDetalle()" class="btn bg-amber-500 text-white hover:bg-amber-600">Editar</button>
-            <button x-show="user && (user.id===gSel.usuario_id || user.rol==='admin')" @click="pedirBorrarGasto()" class="btn-d">Eliminar</button>
+            <button x-show="user && (user.id===gSel.usuario_id || user.rol==='admin')" @click="editarGastoDesdeDetalle()" class="btn bg-amber-500 text-white hover:bg-amber-600" x-text="t('edit')"></button>
+            <button x-show="user && (user.id===gSel.usuario_id || user.rol==='admin')" @click="pedirBorrarGasto()" class="btn-d" x-text="t('delete')"></button>
           </div>
         </div>
         <div>
-          <h4 class="mb-3 text-sm font-bold text-slate-700">Factura / ticket</h4>
+          <h4 class="mb-3 text-sm font-bold text-slate-700" x-text="t('receipt_ticket')"></h4>
           <template x-if="firmandoFoto"><div class="flex h-56 items-center justify-center rounded-2xl border border-slate-200"><svg class="h-8 w-8 animate-spin text-slate-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg></div></template>
           <template x-if="!firmandoFoto && fotoUrl">
             <a :href="fotoUrl" target="_blank"><img :src="fotoUrl" class="w-full rounded-2xl border border-slate-200"></a>
           </template>
           <template x-if="!firmandoFoto && !fotoUrl">
-            <div class="flex h-56 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 text-sm text-slate-400">Sin foto adjunta</div>
+            <div class="flex h-56 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 text-sm text-slate-400" x-text="t('no_photo')"></div>
           </template>
         </div>
       </div>
@@ -773,82 +781,82 @@
 <!-- ══════════ MODAL: CREAR / EDITAR VEHÍCULO ══════════ -->
 <div x-cloak x-show="vehOpen" class="fixed inset-0 z-50 overflow-y-auto bg-white">
   <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3.5 sm:px-6">
-    <h2 class="text-lg font-bold text-slate-900" x-text="vEsEdicion ? 'Editar vehículo' : 'Agregar nuevo vehículo'"></h2>
+    <h2 class="text-lg font-bold text-slate-900" x-text="vEsEdicion ? t('edit_veh') : t('add_new_veh')"></h2>
     <button @click="vehOpen=false" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
       <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
   </div>
   <div class="mx-auto max-w-3xl p-4 sm:p-6">
-    <p class="mb-5 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Identificación</p>
+    <p class="mb-5 text-[13px] font-semibold uppercase tracking-wide text-emerald-700" x-text="t('sec_ident')"></p>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div><label class="lbl">VIN / Patente *</label><input x-model="vForm.vin" class="inp font-mono uppercase" placeholder="1HGCM8…"></div>
-      <div><label class="lbl">Modelo *</label><input x-model="vForm.modelo" class="inp" placeholder="FORD F250"></div>
-      <div><label class="lbl">Placa</label><input x-model="vForm.placa" class="inp uppercase" placeholder="ABC-1234"></div>
-      <div><label class="lbl">Año</label><input type="number" x-model="vForm.anio" class="inp" placeholder="2019"></div>
-      <div><label class="lbl">Color</label><input x-model="vForm.color" class="inp" placeholder="Blanco"></div>
-      <div><label class="lbl">Title</label><input x-model="vForm.title" class="inp" placeholder="HWC / JOSE…"></div>
+      <div><label class="lbl" x-text="t('lbl_vin')"></label><input x-model="vForm.vin" class="inp font-mono uppercase" placeholder="1HGCM8…"></div>
+      <div><label class="lbl" x-text="t('lbl_model')"></label><input x-model="vForm.modelo" class="inp" placeholder="FORD F250"></div>
+      <div><label class="lbl" x-text="t('lbl_plate')"></label><input x-model="vForm.placa" class="inp uppercase" placeholder="ABC-1234"></div>
+      <div><label class="lbl" x-text="t('lbl_year')"></label><input type="number" x-model="vForm.anio" class="inp" placeholder="2019"></div>
+      <div><label class="lbl" x-text="t('lbl_color')"></label><input x-model="vForm.color" class="inp" :placeholder="t('ph_color')"></div>
+      <div><label class="lbl" x-text="t('lbl_title')"></label><input x-model="vForm.title" class="inp" placeholder="HWC / JOSE…"></div>
     </div>
 
-    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Estado, sede y conductores</p>
+    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700" x-text="t('sec_state')"></p>
     <div class="grid gap-4 sm:grid-cols-2">
       <div>
-        <label class="lbl">Estado</label>
+        <label class="lbl" x-text="t('th_state')"></label>
         <select x-model="vForm.estado" class="inp">
-          <option value="activo">Activo</option><option value="en_reparacion">En reparación</option>
-          <option value="vendido">Vendido</option><option value="inactivo">Inactivo</option>
+          <option value="activo" x-text="t('st_active')"></option><option value="en_reparacion" x-text="t('st_repair')"></option>
+          <option value="vendido" x-text="t('st_sold')"></option><option value="inactivo" x-text="t('st_inactive')"></option>
         </select>
       </div>
       <div>
-        <label class="lbl">Sede</label>
+        <label class="lbl" x-text="t('lbl_site')"></label>
         <input x-model="vForm.ubicacion" class="inp uppercase" placeholder="HOUSTON / AUSTIN">
       </div>
       <div class="sm:col-span-2">
-        <label class="lbl">Conductores de esta camioneta</label>
+        <label class="lbl" x-text="t('veh_drivers')"></label>
         <div class="mb-2 flex flex-wrap gap-2" x-show="vForm.asignaciones && vForm.asignaciones.length">
           <template x-for="a in vForm.asignaciones" :key="a.driver_id">
             <span class="inline-flex items-center gap-1.5 rounded-full py-1 pl-3 pr-1.5 text-[13px] font-semibold" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
               <span x-text="a.nombre"></span>
-              <span class="text-[10px] font-bold uppercase opacity-60" x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+              <span class="text-[10px] font-bold uppercase opacity-60" x-text="a.principal ? t('assigned') : t('extra')"></span>
               <button type="button" @click="quitarAsignacion(a.driver_id)" class="flex h-5 w-5 items-center justify-center rounded-full bg-white/70 text-[11px] hover:bg-white">✕</button>
             </span>
           </template>
         </div>
         <div class="flex flex-col gap-2 sm:flex-row">
           <select x-model="vForm.nuevoDriver" class="inp sm:flex-1">
-            <option value="">Elegir driver…</option>
+            <option value="" x-text="t('choose_driver')"></option>
             <template x-for="d in driversNoEnForm" :key="d.id"><option :value="d.id" x-text="d.nombre"></option></template>
           </select>
           <select x-model="vForm.nuevoTipo" class="inp sm:w-36">
-            <option value="principal">Asignado</option>
-            <option value="extra">Extra</option>
+            <option value="principal" x-text="t('assigned')"></option>
+            <option value="extra" x-text="t('extra')"></option>
           </select>
           <button type="button" @click="agregarAsignacion()" class="btn-p sm:w-12">+</button>
         </div>
-        <p class="mt-1.5 text-[12px] text-slate-400">"Asignado" = conductor principal · "Extra" = también la maneja. Podés agregar varios.</p>
-        <p x-show="drivers.length===0" class="mt-1.5 text-[12px] text-amber-600">Todavía no creaste drivers — andá a la sección "Drivers" en el menú.</p>
+        <p class="mt-1.5 text-[12px] text-slate-400" x-text="t('drivers_hint')"></p>
+        <p x-show="drivers.length===0" class="mt-1.5 text-[12px] text-amber-600" x-text="t('no_drivers_yet')"></p>
       </div>
-      <div class="sm:col-span-2"><label class="lbl">Nota</label><textarea x-model="vForm.nota" rows="2" class="inp" placeholder="Detalles del auto…"></textarea></div>
+      <div class="sm:col-span-2"><label class="lbl" x-text="t('lbl_note')"></label><textarea x-model="vForm.nota" rows="2" class="inp" :placeholder="t('ph_note')"></textarea></div>
     </div>
 
-    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Compra</p>
+    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700" x-text="t('sec_purchase')"></p>
     <div class="grid gap-4 sm:grid-cols-2">
-      <div><label class="lbl">Fecha de compra</label><input type="date" x-model="vForm.fecha_compra" class="inp"></div>
-      <div><label class="lbl">Precio de compra (USD)</label><input type="number" step="0.01" min="0" x-model="vForm.precio_compra" class="inp" placeholder="0.00"></div>
+      <div><label class="lbl" x-text="t('purchase_date')"></label><input type="date" x-model="vForm.fecha_compra" class="inp"></div>
+      <div><label class="lbl" x-text="t('purchase_price')"></label><input type="number" step="0.01" min="0" x-model="vForm.precio_compra" class="inp" placeholder="0.00"></div>
     </div>
 
-    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700">Seguros y vencimientos</p>
+    <p class="mb-5 mt-8 text-[13px] font-semibold uppercase tracking-wide text-emerald-700" x-text="t('sec_insurances')"></p>
     <div class="grid gap-4 sm:grid-cols-3">
-      <div><label class="lbl">Aseguradora</label><input x-model="vForm.seguro_compania" class="inp" placeholder="Progressive…"></div>
-      <div><label class="lbl">Vence el seguro</label><input type="date" x-model="vForm.seguro_vencimiento" class="inp"></div>
-      <div><label class="lbl">Vence el registro</label><input type="date" x-model="vForm.registro_vencimiento" class="inp"></div>
+      <div><label class="lbl" x-text="t('insurer')"></label><input x-model="vForm.seguro_compania" class="inp" placeholder="Progressive…"></div>
+      <div><label class="lbl" x-text="t('ins_expiry')"></label><input type="date" x-model="vForm.seguro_vencimiento" class="inp"></div>
+      <div><label class="lbl" x-text="t('reg_expiry')"></label><input type="date" x-model="vForm.registro_vencimiento" class="inp"></div>
     </div>
 
     <div class="mt-8 flex gap-3 border-t border-slate-100 pt-6">
       <button @click="guardarVeh()" :disabled="guardandoVeh" class="btn-p flex-1 py-3">
         <svg x-show="guardandoVeh" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
-        <span x-text="guardandoVeh ? 'Guardando…' : (vEsEdicion ? 'Guardar cambios' : 'Agregar vehículo')"></span>
+        <span x-text="guardandoVeh ? t('saving') : (vEsEdicion ? t('save_changes') : t('add_veh_btn'))"></span>
       </button>
-      <button @click="vehOpen=false" class="btn-s py-3">Cancelar</button>
+      <button @click="vehOpen=false" class="btn-s py-3" x-text="t('cancel')"></button>
     </div>
   </div>
 </div>
@@ -870,54 +878,54 @@
         <div class="grid gap-4 lg:grid-cols-3">
           <div class="card p-5 lg:col-span-2">
             <div class="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Estado</p><span class="badge mt-1" :class="estadoCls(vSel.estado)" x-text="estadoTxt(vSel.estado)"></span></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Sede</p><p class="font-semibold" x-text="vSel.ubicacion || '—'"></p></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Placa</p><p class="font-semibold" x-text="vSel.placa || '—'"></p></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Año</p><p class="font-semibold" x-text="vSel.anio || '—'"></p></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Color</p><p class="font-semibold" x-text="vSel.color || '—'"></p></div>
-              <div><p class="text-[11px] font-medium uppercase text-slate-400">Title</p><p class="font-semibold" x-text="vSel.title || '—'"></p></div>
-              <div x-show="vSel.fecha_compra"><p class="text-[11px] font-medium uppercase text-slate-400">Compra</p><p class="font-semibold" x-text="fmtFecha(vSel.fecha_compra)"></p></div>
-              <div x-show="vSel.precio_compra"><p class="text-[11px] font-medium uppercase text-slate-400">Precio compra</p><p class="font-semibold" x-text="fmtMoney(vSel.precio_compra)"></p></div>
-              <div x-show="vSel.seguro_compania"><p class="text-[11px] font-medium uppercase text-slate-400">Aseguradora</p><p class="font-semibold" x-text="vSel.seguro_compania"></p></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('th_state')"></p><span class="badge mt-1" :class="estadoCls(vSel.estado)" x-text="estadoTxt(vSel.estado)"></span></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('lbl_site')"></p><p class="font-semibold" x-text="vSel.ubicacion || '—'"></p></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('th_plate')"></p><p class="font-semibold" x-text="vSel.placa || '—'"></p></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('lbl_year')"></p><p class="font-semibold" x-text="vSel.anio || '—'"></p></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('lbl_color')"></p><p class="font-semibold" x-text="vSel.color || '—'"></p></div>
+              <div><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('lbl_title')"></p><p class="font-semibold" x-text="vSel.title || '—'"></p></div>
+              <div x-show="vSel.fecha_compra"><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('purchase_date')"></p><p class="font-semibold" x-text="fmtFecha(vSel.fecha_compra)"></p></div>
+              <div x-show="vSel.precio_compra"><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('purchase_price')"></p><p class="font-semibold" x-text="fmtMoney(vSel.precio_compra)"></p></div>
+              <div x-show="vSel.seguro_compania"><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('insurer')"></p><p class="font-semibold" x-text="vSel.seguro_compania"></p></div>
               <div x-show="vSel.seguro_vencimiento">
-                <p class="text-[11px] font-medium uppercase text-slate-400">Vence seguro</p>
+                <p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('ins_expiry')"></p>
                 <p class="font-semibold" x-text="fmtFecha(vSel.seguro_vencimiento)"></p>
                 <span class="badge mt-1" :class="venCls(vSel.seguro_vencimiento)" x-text="venTxt(vSel.seguro_vencimiento)"></span>
               </div>
               <div x-show="vSel.registro_vencimiento">
-                <p class="text-[11px] font-medium uppercase text-slate-400">Vence registro</p>
+                <p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('reg_expiry')"></p>
                 <p class="font-semibold" x-text="fmtFecha(vSel.registro_vencimiento)"></p>
                 <span class="badge mt-1" :class="venCls(vSel.registro_vencimiento)" x-text="venTxt(vSel.registro_vencimiento)"></span>
               </div>
-              <div class="col-span-2 sm:col-span-3"><p class="text-[11px] font-medium uppercase text-slate-400">Conductores</p>
+              <div class="col-span-2 sm:col-span-3"><p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('th_drivers')"></p>
                 <div class="mt-1 flex flex-wrap gap-1.5">
                   <template x-for="a in driversDeVeh(vSel.id)" :key="a.driver_id">
                     <span class="badge" :class="a.principal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'">
-                      <span x-text="nombreDriver(a.driver_id)"></span> · <span x-text="a.principal ? 'Asignado' : 'Extra'"></span>
+                      <span x-text="nombreDriver(a.driver_id)"></span> · <span x-text="a.principal ? t('assigned') : t('extra')"></span>
                     </span>
                   </template>
-                  <span x-show="driversDeVeh(vSel.id).length===0" class="text-sm text-slate-400">Sin asignar</span>
+                  <span x-show="driversDeVeh(vSel.id).length===0" class="text-sm text-slate-400" x-text="t('no_assigned')"></span>
                 </div>
               </div>
             </div>
             <div class="mt-5 border-t border-slate-100 pt-4" x-show="vSel.nota">
-              <p class="text-[11px] font-medium uppercase text-slate-400">Nota</p>
+              <p class="text-[11px] font-medium uppercase text-slate-400" x-text="t('lbl_note')"></p>
               <p class="mt-1 text-sm text-slate-600" x-text="vSel.nota"></p>
             </div>
           </div>
           <div class="card p-5">
-            <p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? 'Total gastado' : 'Mi gasto en este auto'"></p>
+            <p class="text-[11px] font-medium uppercase text-slate-400" x-text="user?.rol==='admin' ? t('total_spent_lbl') : t('my_spent_lbl')"></p>
             <p class="text-3xl font-bold text-slate-900" x-text="fmtMoney(gastoTotalVeh(vSel.id))"></p>
-            <p class="mt-2 text-sm text-slate-500"><span x-text="gastosVeh.length"></span> gastos registrados</p>
-            <p class="mt-1 text-sm text-slate-500" x-show="ultimoGastoVeh">Último: <span x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : ''"></span></p>
-            <button @click="verHistorialVeh(vSel)" class="btn-s mt-4 w-full">Ver historial completo</button>
+            <p class="mt-2 text-sm text-slate-500"><span x-text="gastosVeh.length"></span> <span x-text="t('expenses_registered')"></span></p>
+            <p class="mt-1 text-sm text-slate-500" x-show="ultimoGastoVeh"><span x-text="t('last_lbl')"></span> <span x-text="ultimoGastoVeh ? fmtFecha(ultimoGastoVeh.fecha) : ''"></span></p>
+            <button @click="verHistorialVeh(vSel)" class="btn-s mt-4 w-full" x-text="t('full_history')"></button>
           </div>
         </div>
         <div class="mt-5 flex flex-wrap gap-3">
-          <button @click="abrirGasto(vSel.id)" class="btn-p">+ Cargar gasto</button>
-          <button @click="toggleFav(vSel.id)" class="btn-s" x-text="esFav(vSel.id) ? '★ Quitar de favoritos' : '☆ Añadir a favoritos'"></button>
-          <button x-show="user?.rol==='admin'" @click="editarVehDesdeDetalle()" class="btn bg-amber-500 text-white hover:bg-amber-600">Editar</button>
-          <button x-show="user?.rol==='admin'" @click="pedirBorrarVeh()" class="btn-d">Eliminar vehículo</button>
+          <button @click="abrirGasto(vSel.id)" class="btn-p" x-text="t('load_expense')"></button>
+          <button @click="toggleFav(vSel.id)" class="btn-s" x-text="esFav(vSel.id) ? t('rm_fav') : t('add_fav')"></button>
+          <button x-show="user?.rol==='admin'" @click="editarVehDesdeDetalle()" class="btn bg-amber-500 text-white hover:bg-amber-600" x-text="t('edit')"></button>
+          <button x-show="user?.rol==='admin'" @click="pedirBorrarVeh()" class="btn-d" x-text="t('del_veh_btn')"></button>
         </div>
       </div>
     </template>
@@ -927,23 +935,23 @@
 <!-- ══════════ MODAL: NUEVO / EDITAR DRIVER ══════════ -->
 <div x-cloak x-show="driverOpen" class="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm">
   <div class="card my-8 w-full max-w-md p-6">
-    <h2 class="mb-5 text-lg font-bold text-slate-900" x-text="dEsEdicion ? 'Editar driver' : 'Nuevo driver'"></h2>
+    <h2 class="mb-5 text-lg font-bold text-slate-900" x-text="dEsEdicion ? t('edit_driver_t') : t('new_driver_t')"></h2>
     <div class="space-y-4">
-      <div><label class="lbl">Nombre completo *</label><input x-model="dForm.nombre" class="inp" placeholder="José Pérez"></div>
-      <div><label class="lbl">Teléfono</label><input x-model="dForm.telefono" class="inp" placeholder="+1 713 555 0100"></div>
-      <div><label class="lbl">Nota</label><textarea x-model="dForm.nota" rows="2" class="inp" placeholder="Opcional"></textarea></div>
+      <div><label class="lbl" x-text="t('full_name')"></label><input x-model="dForm.nombre" class="inp" :placeholder="t('ph_driver_name')"></div>
+      <div><label class="lbl" x-text="t('phone')"></label><input x-model="dForm.telefono" class="inp" placeholder="+1 713 555 0100"></div>
+      <div><label class="lbl" x-text="t('lbl_note')"></label><textarea x-model="dForm.nota" rows="2" class="inp" :placeholder="t('optional')"></textarea></div>
       <div>
-        <label class="lbl">Vincular a usuario de la app (opcional)</label>
+        <label class="lbl" x-text="t('link_user')"></label>
         <select x-model="dForm.user_id" class="inp">
-          <option value="">Sin vincular</option>
+          <option value="" x-text="t('unlinked')"></option>
           <template x-for="p in perfiles" :key="p.id"><option :value="p.id" x-text="p.nombre"></option></template>
         </select>
-        <p class="mt-1 text-[12px] text-slate-400">Si lo vinculás, esa persona ve las camionetas de este driver en "Mis Carros".</p>
+        <p class="mt-1 text-[12px] text-slate-400" x-text="t('link_hint')"></p>
       </div>
     </div>
     <div class="mt-6 flex gap-3">
-      <button @click="guardarDriver()" :disabled="guardandoDriver" class="btn-p flex-1">Guardar</button>
-      <button @click="driverOpen=false" class="btn-s flex-1">Cancelar</button>
+      <button @click="guardarDriver()" :disabled="guardandoDriver" class="btn-p flex-1" x-text="t('save')"></button>
+      <button @click="driverOpen=false" class="btn-s flex-1" x-text="t('cancel')"></button>
     </div>
   </div>
 </div>
@@ -959,7 +967,7 @@
     </div>
     <p class="text-sm text-slate-500" x-text="confirmModal.msg"></p>
     <div class="mt-6 flex gap-3">
-      <button @click="confirmModal.show=false" class="btn-s flex-1">Cancelar</button>
+      <button @click="confirmModal.show=false" class="btn-s flex-1" x-text="t('cancel')"></button>
       <button @click="confirmarSi()" class="btn-d flex-1" x-text="confirmModal.texto"></button>
     </div>
   </div>
@@ -967,16 +975,210 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-//  CONFIGURACIÓN 
+//  CONFIGURACIÓN — poné tu ANON KEY (la URL ya está)
 // ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://nfizwexpujbgdhyccycy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5maXp3ZXhwdWpiZ2RoeWNjeWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NTQzODYsImV4cCI6MjEwNjEzMDM4Nn0.lbyT9vaz9QAEfeho_vMC9XBfE6cNttzhe3rHkXSYeWY';
 
+// ══════════════════════════════════════════════════════════
+//  TRADUCCIONES  [ inglés , español ]
+// ══════════════════════════════════════════════════════════
+const TRAD = {
+  // login / general
+  login_sub: ['Vehicle expense tracker · HWC LLC', 'Control de gastos mecánicos · HWC LLC'],
+  email: ['Email', 'Email'], password: ['Password', 'Contraseña'],
+  ph_email: ['you@email.com', 'tu@correo.com'],
+  btn_login: ['Sign in', 'Ingresar'], logging_in: ['Signing in…', 'Ingresando…'],
+  err_complete: ['Enter email and password.', 'Completá email y contraseña.'],
+  err_creds: ['Wrong email or password.', 'Email o contraseña incorrectos.'],
+  save: ['Save', 'Guardar'], cancel: ['Cancel', 'Cancelar'], edit: ['Edit', 'Editar'], delete: ['Delete', 'Eliminar'],
+  optional: ['Optional', 'Opcional'], saving: ['Saving…', 'Guardando…'],
+  toast_ok: ['Done', 'Listo'], toast_err: ['Error', 'Error'],
+  // sidebar
+  app_tag: ['Expense tracker', 'Control de gastos'],
+  nav_dash: ['Dashboard', 'Dashboard'], nav_mycars: ['My Cars', 'Mis Carros'],
+  nav_history: ['Expense History', 'Historial de Gastos'], nav_myexp: ['My Expenses', 'Mis Gastos'],
+  nav_vehicles: ['Vehicles', 'Vehículos'], admin_section: ['Management', 'Administración'],
+  nav_drivers: ['Drivers', 'Drivers'], nav_reports: ['Reports', 'Reportes'], nav_addcar: ['Add Vehicle', 'Agregar Auto'],
+  refresh: ['Refresh data', 'Actualizar datos'], logout: ['Sign out', 'Cerrar sesión'],
+  role_admin: ['Admin', 'Admin'], role_emp: ['Employee', 'Empleado'],
+  // dashboard
+  dash_hello: ['Hi', 'Hola'],
+  dash_sub_admin: ["Here's how the fleet is doing today.", 'Así va el día de hoy en la flota.'],
+  dash_sub_emp: ['Your expenses and activity today.', 'Tus gastos y tu actividad de hoy.'],
+  kpi_active: ['Active vehicles', 'Vehículos activos'], kpi_in_repair: ['in repair', 'en reparación'], kpi_total: ['in total', 'en total'],
+  kpi_today: ["Today's expenses", 'Gastos de hoy'], kpi_my_today: ['My expenses today', 'Mis gastos de hoy'],
+  kpi_rec_today: ['records today', 'registro(s) de hoy'],
+  kpi_month: ["This month's expenses", 'Gastos del mes'], kpi_my_month: ['My expenses this month', 'Mis gastos del mes'],
+  kpi_rec_month: ['records this month', 'registro(s) este mes'],
+  kpi_vs: ['vs. last month', 'vs. mes anterior'], kpi_last_month: ['Last month:', 'Mes pasado:'],
+  chart_6m: ['Expenses · last 6 months', 'Evolución de gastos · últimos 6 meses'],
+  chart_6m_my: ['My expenses · last 6 months', 'Mis gastos · últimos 6 meses'],
+  cat_month: ['By category · this month', 'Por categoría · este mes'],
+  no_exp_month: ['No expenses this month.', 'Sin gastos este mes.'],
+  alerts_title: ['⚠️ Upcoming expirations', '⚠️ Vencimientos próximos'],
+  alert_expired: ['Expired', 'Vencido'], alert_in: ['In {d}d', 'En {d}d'],
+  alerts_ok: ['All up to date ✅', 'Todo al día ✅'],
+  today_table: ["Today's expenses", 'Gastos de hoy'], today_table_my: ['My expenses today', 'Mis gastos de hoy'],
+  today: ['today', 'hoy'], no_today: ['No expenses logged today yet.', 'Todavía no hay gastos cargados hoy.'],
+  th_vehicle: ['Vehicle', 'Vehículo'], th_employee: ['Employee', 'Empleado'], th_concept: ['Concept', 'Concepto'],
+  th_amount: ['Amount', 'Monto'], th_date: ['Date', 'Fecha'], th_category: ['Category', 'Categoría'],
+  // mis carros
+  mycars_sub: ['Trucks where you drive (assigned or extra) or marked with a star.', 'Camionetas donde sos conductor (asignado o extra) o que marcaste con estrella.'],
+  total_spent: ['Total spent: ', 'Total gastado: '], my_spent: ['My spending: ', 'Mi gasto: '],
+  add_expense: ['+ Expense', '+ Gasto'], view: ['View', 'Ver'], no_vin: ['no VIN', 'sin VIN'],
+  mycars_empty_t: ['No trucks here yet', 'No tenés camionetas acá'],
+  mycars_empty_s: ['Star ★ your trucks in "Vehicles", or ask to be added as a driver.', 'Marcá las tuyas con la estrella ★ en "Vehículos", o pedí que te agreguen como driver.'],
+  // historial
+  clear_filters: ['Clear filters', 'Limpiar filtros'],
+  ph_search_veh: ['Vehicle / VIN…', 'Vehículo / VIN…'], ph_concept: ['Concept…', 'Concepto…'],
+  all_categories: ['All categories', 'Todas las categorías'], all_employees: ['All employees', 'Todos los empleados'],
+  total: ['Total:', 'Total:'], showing: ['Showing', 'Mostrando'], of: ['of', 'de'],
+  expenses_word: ['expenses', 'gastos'], page: ['Page', 'Pág.'],
+  no_results_filters: ['No expenses match these filters.', 'No hay gastos con estos filtros.'],
+  // vehículos
+  word_vehicles: ['vehicles', 'vehículos'], word_active: ['active', 'activos'],
+  add_vehicle: ['+ Add vehicle', '+ Agregar auto'],
+  search_veh_ph: ['Search by model, VIN, plate, title or driver…', 'Buscar por modelo, VIN, placa, title o conductor…'],
+  th_model: ['Model', 'Modelo'], th_plate: ['Plate', 'Placa'], th_state: ['Status', 'Estado'],
+  th_drivers: ['Drivers', 'Conductores'], th_total_spent: ['Total spent', 'Total gastado'], th_my_spent: ['My spending', 'Mi gasto'],
+  no_results: ['No results.', 'Sin resultados.'],
+  st_active: ['Active', 'Activo'], st_repair: ['In repair', 'En reparación'],
+  st_sold: ['Sold', 'Vendido'], st_inactive: ['Inactive', 'Inactivo'],
+  // drivers
+  word_drivers_reg: ['drivers registered', 'conductores registrados'],
+  new_driver: ['+ New driver', '+ Nuevo driver'],
+  search_driver_ph: ['Search by name or phone…', 'Buscar por nombre o teléfono…'],
+  vehicles_word: ['Vehicles', 'Vehículos'], assigned: ['Assigned', 'Asignado'], extra: ['Extra', 'Extra'],
+  no_trucks: ['No trucks', 'Sin camionetas'],
+  drivers_empty_t: ['No drivers yet', 'Todavía no hay drivers'],
+  drivers_empty_s: ['Create the first one with "+ New driver".', 'Creá el primero con el botón "+ Nuevo driver".'],
+  // historial por vehículo
+  back_vehicles: ['Back to vehicles', 'Volver a vehículos'],
+  total_word: ['Total', 'Total'], my_total: ['My total', 'Mi total'],
+  expenses_word2: ['Expenses', 'Gastos'], my_expenses: ['My expenses', 'Mis gastos'],
+  last: ['Last', 'Último'], expenses_total: ['expenses in total', 'gastos en total'],
+  no_expenses_veh: ['No expenses registered.', 'Sin gastos registrados.'],
+  // reportes
+  reports_sub: ['Mechanical expenses · HWC LLC', 'Gastos mecánicos · HWC LLC'],
+  rep_general: ['General (all)', 'General (todo)'], rep_by_veh: ['By vehicle', 'Por vehículo'], rep_by_emp: ['By employee', 'Por empleado'],
+  search_vehicle: ['Search vehicle…', 'Buscar auto…'], search_employee: ['Search employee…', 'Buscar empleado…'],
+  from: ['From', 'Desde'], until: ['Until', 'Hasta'],
+  rep_total: ['Total spent', 'Total gastado'], rep_count: ['# of records', 'N° de registros'], rep_avg: ['Average per expense', 'Promedio por gasto'],
+  top5_veh: ['Top 5 · highest spending vehicles', 'Top 5 · autos que más gastaron'],
+  top5_emp: ['Top 5 · most active employees', 'Top 5 · empleados que más registran'],
+  detail: ['Detail', 'Detalle'], records_word: ['records', 'registros'],
+  no_records: ['No records for these filters.', 'No hay registros con estos filtros.'],
+  nothing_export: ['Nothing to export', 'Nada que exportar'],
+  no_records_export: ['No records with these filters.', 'No hay registros con estos filtros.'],
+  excel_done: ['Excel generated.', 'Excel generado.'], pdf_done: ['PDF generated.', 'PDF generado.'],
+  // modal gasto
+  new_expense: ['New expense', 'Cargar nuevo gasto'], edit_expense: ['Edit expense', 'Editar gasto'],
+  step1_vehicle: ['1 · Vehicle', '1 · Vehículo'],
+  ph_search_veh_fab: ['Model, VIN or plate…', 'Modelo, VIN o placa…'],
+  vehicle_selected: ['Selected vehicle', 'Vehículo seleccionado'], change: ['Change', 'Cambiar'],
+  amount_usd: ['Amount (USD) *', 'Monto (USD) *'], expense_date: ['Expense date *', 'Fecha del gasto *'],
+  category: ['Category', 'Categoría'], no_category: ['No category', 'Sin categoría'],
+  odometer: ['Odometer / miles', 'Odómetro / millas'],
+  concept: ['Concept *', 'Concepto *'],
+  ph_concept2: ['e.g. oil change and filter', 'Ej: cambio de aceite y filtro'],
+  receipt_photo: ['Receipt photo', 'Foto de la factura'],
+  choose_photo: ['Choose photo', 'Elegir foto'], replace_photo: ['Replace photo', 'Reemplazar foto'],
+  keep_photo: ['Leave empty to keep the current one.', 'Dejala vacía para conservar la actual.'],
+  processing_img: ['Processing image…', 'Procesando imagen…'],
+  save_expense: ['Save expense', 'Guardar gasto'],
+  // detalle gasto
+  expense_detail: ['Expense detail', 'Detalle del gasto'],
+  loaded_by: ['Logged by', 'Cargado por'], receipt_ticket: ['Receipt / ticket', 'Factura / ticket'],
+  no_photo: ['No photo attached', 'Sin foto adjunta'],
+  // modal vehículo
+  add_new_veh: ['Add new vehicle', 'Agregar nuevo vehículo'], edit_veh: ['Edit vehicle', 'Editar vehículo'],
+  sec_ident: ['Identification', 'Identificación'],
+  lbl_vin: ['VIN / Plate *', 'VIN / Patente *'], lbl_model: ['Model *', 'Modelo *'], lbl_plate: ['Plate', 'Placa'],
+  lbl_year: ['Year', 'Año'], lbl_color: ['Color', 'Color'], ph_color: ['White', 'Blanco'], lbl_title: ['Title', 'Title'],
+  sec_state: ['Status, site & drivers', 'Estado, sede y conductores'], lbl_site: ['Site', 'Sede'],
+  veh_drivers: ['Drivers for this truck', 'Conductores de esta camioneta'],
+  choose_driver: ['Choose driver…', 'Elegir driver…'],
+  drivers_hint: ['"Assigned" = main driver · "Extra" = also drives it. You can add several.', '"Asignado" = conductor principal · "Extra" = también la maneja. Podés agregar varios.'],
+  no_drivers_yet: ['No drivers created yet — go to "Drivers" in the menu.', 'Todavía no creaste drivers — andá a la sección "Drivers" en el menú.'],
+  lbl_note: ['Note', 'Nota'], ph_note: ['Vehicle details…', 'Detalles del auto…'],
+  sec_purchase: ['Purchase', 'Compra'], purchase_date: ['Purchase date', 'Fecha de compra'],
+  purchase_price: ['Purchase price (USD)', 'Precio de compra (USD)'],
+  sec_insurances: ['Insurance & expirations', 'Seguros y vencimientos'],
+  insurer: ['Insurance company', 'Aseguradora'], ins_expiry: ['Insurance expiry', 'Vence el seguro'],
+  reg_expiry: ['Registration expiry', 'Vence el registro'],
+  save_changes: ['Save changes', 'Guardar cambios'], add_veh_btn: ['Add vehicle', 'Agregar vehículo'],
+  // detalle vehículo
+  expires_today: ['Expires today!', '¡Vence hoy!'], expired_ago: ['Expired {d}d ago', 'Vencido hace {d}d'], in_days: ['In {d} days', 'En {d} días'],
+  no_assigned: ['Unassigned', 'Sin asignar'],
+  total_spent_lbl: ['Total spent', 'Total gastado'], my_spent_lbl: ['My spending on this truck', 'Mi gasto en este auto'],
+  expenses_registered: ['expenses registered', 'gastos registrados'], last_lbl: ['Last:', 'Último:'],
+  full_history: ['View full history', 'Ver historial completo'],
+  load_expense: ['+ Add expense', '+ Cargar gasto'],
+  rm_fav: ['★ Remove from favorites', '★ Quitar de favoritos'], add_fav: ['☆ Add to favorites', '☆ Añadir a favoritos'],
+  del_veh_btn: ['Delete vehicle', 'Eliminar vehículo'],
+  // modal driver
+  new_driver_t: ['New driver', 'Nuevo driver'], edit_driver_t: ['Edit driver', 'Editar driver'],
+  full_name: ['Full name *', 'Nombre completo *'], ph_driver_name: ['John Smith', 'José Pérez'],
+  phone: ['Phone', 'Teléfono'],
+  link_user: ['Link to an app user (optional)', 'Vincular a usuario de la app (opcional)'],
+  unlinked: ['Not linked', 'Sin vincular'],
+  link_hint: ['If you link it, that person sees this driver\'s trucks in "My Cars".', 'Si lo vinculás, esa persona ve las camionetas de este driver en "Mis Carros".'],
+  // toasts / validaciones
+  data_updated: ['Data updated.', 'Datos actualizados.'],
+  load_error: ['Could not load data. Check your connection.', 'No pude cargar los datos. Revisá tu conexión.'],
+  fav_error: ['Could not save favorite.', 'No pude guardar el favorito.'],
+  photo_error: ['Could not process the image.', 'No pude procesar la imagen.'],
+  photo_up_err: ['Could not upload the photo: ', 'No pude subir la foto: '],
+  no_veh_t: ['Missing vehicle', 'Falta el vehículo'], no_veh_m: ['Select which vehicle the expense belongs to.', 'Elegí en qué auto se hizo el gasto.'],
+  amt_t: ['Invalid amount', 'Monto inválido'], amt_m: ['Enter an amount greater than zero.', 'Ingresá un monto mayor a cero.'],
+  conc_t: ['Missing concept', 'Falta el concepto'], conc_m: ['Briefly describe the expense.', 'Describí brevemente el gasto.'],
+  ok_saved: ['Expense saved.', 'Gasto guardado.'], ok_updated: ['Expense updated.', 'Gasto actualizado.'],
+  ok_deleted: ['Expense deleted.', 'Gasto eliminado.'],
+  del_exp_t: ['Delete expense', 'Eliminar gasto'],
+  del_exp_m: ['Delete this expense? This action cannot be undone.', '¿Borrar este gasto? Esta acción no se puede deshacer.'],
+  model_t: ['Missing model', 'Falta el modelo'], model_m: ['Enter the vehicle model.', 'Ingresá el modelo del vehículo.'],
+  vin_t: ['Missing VIN', 'Falta el VIN'], vin_m: ['Enter the VIN or plate.', 'Ingresá el VIN o patente.'],
+  dup_vin: ['That VIN is already registered.', 'Ese VIN ya está registrado.'],
+  veh_added: ['Vehicle added.', 'Vehículo agregado.'], veh_updated: ['Vehicle updated.', 'Vehículo actualizado.'],
+  del_veh_t: ['Delete vehicle', 'Eliminar vehículo'],
+  del_veh_m: ['You are about to delete {v}. Its {n} expenses and receipts will also be deleted. This cannot be undone.', 'Vas a eliminar {v}. Se borrarán también sus {n} gastos con sus facturas. Esta acción no se puede deshacer.'],
+  del_veh_m_non: ['You are about to delete {v}. This cannot be undone.', 'Vas a eliminar {v}. Esta acción no se puede deshacer.'],
+  veh_deleted: ['Vehicle deleted.', 'Vehículo eliminado.'],
+  name_t: ['Missing name', 'Falta el nombre'], name_m: ["Enter the driver's name.", 'Ingresá el nombre del driver.'],
+  driver_added: ['Driver added.', 'Driver agregado.'], driver_updated: ['Driver updated.', 'Driver actualizado.'],
+  del_driver_t: ['Delete driver', 'Eliminar driver'],
+  del_driver_m: ['You are about to delete {n}. They will be unlinked from {k} vehicle(s); vehicles and expenses are NOT deleted.', 'Vas a eliminar a {n}. Quedará desligado de {k} vehículo(s); los vehículos y sus gastos NO se borran.'],
+  del_driver_m2: ['You are about to delete {n}.', 'Vas a eliminar a {n}.'],
+  driver_deleted: ['Driver deleted.', 'Driver eliminado.'],
+  pick_driver_t: ['Pick a driver', 'Elegí un driver'], pick_driver_m: ['Select a driver from the list.', 'Seleccioná un driver de la lista.'],
+  assign_warn_t: ['Attention', 'Atención'],
+  assign_warn_m: ['The vehicle was saved but there was a problem with the drivers: ', 'El vehículo se guardó pero hubo un problema con los drivers: '],
+  profile_err: ['Profile not found. Ask the administrator to review it.', 'No encontré tu perfil. Pedile al administrador que lo revise.'],
+  login_fail: ['Could not sign in.', 'No se pudo iniciar sesión.'],
+  plate_colon: ['Plate: ', 'Placa: '],
+  // PDF
+  pdf_title: ['Autos HWC · Expense Report', 'Autos HWC · Reporte de Gastos'],
+  pdf_type_lbl: ['Type:', 'Tipo:'], pdf_period_lbl: ['Period:', 'Período:'],
+  pdf_all: ['All history', 'Toda la historia'], pdf_since: ['Since', 'Desde'], pdf_to: ['to', 'al'], pdf_until: ['Until', 'Hasta'],
+  pdf_total: ['Total', 'Total'], pdf_records: ['Records', 'Registros'], pdf_avg: ['Average', 'Promedio'],
+  pdf_top_veh: ['Top 5 highest spending vehicles', 'Top 5 autos que más gastan'],
+  pdf_top_emp: ['Top 5 most active employees', 'Top 5 empleados que más registran'],
+  pdf_type_veh: ['Vehicle', 'Vehículo'], pdf_type_emp: ['Employee', 'Empleado'],
+  // Excel
+  xl_veh: ['Vehicle', 'Vehículo'], xl_emp: ['Employee', 'Empleado'], xl_cat: ['Category', 'Categoría'],
+  xl_concept: ['Concept', 'Concepto'], xl_amount: ['Amount', 'Monto'], xl_odo: ['Odometer', 'Odómetro'],
+  xl_detail_sheet: ['Expense Detail', 'Detalle Gastos'], xl_top_veh_sheet: ['Top Vehicles', 'Top Autos'],
+  xl_top_emp_sheet: ['Top Employees', 'Top Empleados'], xl_cat_sheet: ['By Category', 'Por Categoría'],
+  xl_total_spent: ['Total Spent', 'Total Gastado'], xl_total_reg: ['Total Registered', 'Total Registrado'],
+  xl_no_cat: ['No category', 'Sin categoría'],
+};
 
 function fleetApp() {
   return {
     /* ── estado general ── */
     sb: null, canal: null, _rtT: null,
+    lang: localStorage.getItem('hwcLang') || 'en',
     user: null, loginEmail: '', loginPass: '', loginError: '', showPass: false, cargandoLogin: false,
     loading: false,
     vehiculos: [], gastos: [], perfiles: [], categorias: [], favoritosIds: [],
@@ -1006,6 +1208,15 @@ function fleetApp() {
     repIni: '', repFin: '', repRes: { total: 0, count: 0 }, repPage: 1, repPerPage: 50,
     ch: { mes: null, rv: null, re: null },
 
+    /* ══════ IDIOMA ══════ */
+    t(k) { const e = TRAD[k]; return e ? (this.lang === 'es' ? e[1] : e[0]) : k; },
+    cambiarLang() {
+      this.lang = this.lang === 'en' ? 'es' : 'en';
+      localStorage.setItem('hwcLang', this.lang);
+      if (this.activeSection === 'dashboard') this.renderDashCharts();
+      if (this.activeSection === 'reportes') this.generarReportes();
+    },
+
     /* ══════ ARRANQUE ══════ */
     init() {
       this.sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1023,14 +1234,14 @@ function fleetApp() {
       if (this.user && this.user.id === authUser.id) return;
       try {
         const { data: per, error } = await this.sb.from('profiles').select('id,nombre,rol').eq('id', authUser.id).single();
-        if (error || !per) throw new Error('No encontré tu perfil. Pedile al administrador que lo revise.');
+        if (error || !per) throw new Error(this.t('profile_err'));
         this.user = { id: authUser.id, email: authUser.email, nombre: per.nombre, rol: per.rol };
         this.loading = true;
         await this.cargarDatos();
         this.suscribirRealtime();
         this.renderDashCharts();
       } catch (e) {
-        this.loginError = e.message || 'No se pudo iniciar sesión.';
+        this.loginError = e.message || this.t('login_fail');
         await this.sb.auth.signOut();
       } finally { this.loading = false; }
     },
@@ -1045,10 +1256,10 @@ function fleetApp() {
     },
 
     async login() {
-      if (!this.loginEmail || !this.loginPass) { this.loginError = 'Completá email y contraseña.'; return; }
+      if (!this.loginEmail || !this.loginPass) { this.loginError = this.t('err_complete'); return; }
       this.cargandoLogin = true; this.loginError = '';
       const { error } = await this.sb.auth.signInWithPassword({ email: this.loginEmail, password: this.loginPass });
-      if (error) this.loginError = (error.message === 'Invalid login credentials') ? 'Email o contraseña incorrectos.' : error.message;
+      if (error) this.loginError = (error.message === 'Invalid login credentials') ? this.t('err_creds') : error.message;
       this.cargandoLogin = false;
     },
     async logout() { await this.sb.auth.signOut(); },
@@ -1064,7 +1275,7 @@ function fleetApp() {
         this.sb.from('drivers').select('*').order('nombre'),
         this.sb.from('vehiculo_drivers').select('*'),
       ]);
-      if ([r1, r2, r3, r4, r5, r6, r7].some(r => r.error)) { this.avisar('Error', 'No pude cargar los datos. Revisá tu conexión.', 'error'); return; }
+      if ([r1, r2, r3, r4, r5, r6, r7].some(r => r.error)) { this.avisar(this.t('toast_err'), this.t('load_error'), 'error'); return; }
       this.vehiculos = r1.data; this.gastos = r2.data; this.perfiles = r3.data;
       this.categorias = r4.data; this.favoritosIds = r5.data.map(f => f.vehiculo_id);
       this.drivers = r6.data; this.asignaciones = r7.data;
@@ -1076,7 +1287,7 @@ function fleetApp() {
       if (this.activeSection === 'dashboard') this.renderDashCharts();
       if (this.activeSection === 'reportes') this.generarReportes();
       this.loading = false;
-      this.avisar('Listo', 'Datos actualizados.');
+      this.avisar(this.t('toast_ok'), this.t('data_updated'));
     },
 
     suscribirRealtime() {
@@ -1105,19 +1316,24 @@ function fleetApp() {
       clearTimeout(this._toastT);
       this._toastT = setTimeout(() => this.toast.show = false, 3500);
     },
-    confirmar(title, msg, action, texto = 'Eliminar') { this.confirmModal = { show: true, title, msg, texto, action }; },
+    confirmar(title, msg, action, texto = null) { this.confirmModal = { show: true, title, msg, texto: texto || this.t('delete'), action }; },
     confirmarSi() { const a = this.confirmModal.action; this.confirmModal.show = false; if (a) a(); },
     fmtMoney(n) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(n) || 0); },
-    fmtFecha(iso) { if (!iso) return '—'; return new Date(iso + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }); },
+    fmtFecha(iso) { if (!iso) return '—'; return new Date(iso + 'T00:00:00').toLocaleDateString(this.lang === 'es' ? 'es-ES' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' }); },
     hoy() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); },
     nul(v) { return (v === '' || v === undefined) ? null : v; },
     nombreDe(uid) { const p = this.perfiles.find(p => p.id === uid); return p ? p.nombre : '—'; },
     esFav(id) { return this.favoritosIds.includes(id); },
     diasHasta(f) { return Math.round((new Date(f + 'T00:00:00') - new Date(this.hoy() + 'T00:00:00')) / 86400000); },
     venCls(f) { if (!f) return ''; const d = this.diasHasta(f); if (d < 0) return 'bg-rose-100 text-rose-700'; if (d <= 15) return 'bg-amber-100 text-amber-700'; return 'bg-emerald-100 text-emerald-700'; },
-    venTxt(f) { if (!f) return '—'; const d = this.diasHasta(f); if (d < 0) return 'Vencido hace ' + Math.abs(d) + 'd'; if (d === 0) return '¡Vence hoy!'; return 'En ' + d + ' días'; },
+    venTxt(f) {
+      if (!f) return '—'; const d = this.diasHasta(f);
+      if (d < 0) return this.t('expired_ago').replace('{d}', Math.abs(d));
+      if (d === 0) return this.t('expires_today');
+      return this.t('in_days').replace('{d}', d);
+    },
     estadoCls(e) { return { activo: 'bg-emerald-100 text-emerald-700', en_reparacion: 'bg-amber-100 text-amber-700', vendido: 'bg-slate-200 text-slate-600', inactivo: 'bg-slate-200 text-slate-500' }[e] || 'bg-slate-100 text-slate-600'; },
-    estadoTxt(e) { return { activo: 'Activo', en_reparacion: 'En reparación', vendido: 'Vendido', inactivo: 'Inactivo' }[e] || e; },
+    estadoTxt(e) { return { activo: this.t('st_active'), en_reparacion: this.t('st_repair'), vendido: this.t('st_sold'), inactivo: this.t('st_inactive') }[e] || e; },
     catColor(n) {
       const pal = ['bg-emerald-100 text-emerald-700', 'bg-sky-100 text-sky-700', 'bg-amber-100 text-amber-700', 'bg-violet-100 text-violet-700', 'bg-rose-100 text-rose-700', 'bg-teal-100 text-teal-700', 'bg-orange-100 text-orange-700', 'bg-indigo-100 text-indigo-700'];
       let h = 0; const s = n || '?'; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
@@ -1138,7 +1354,7 @@ function fleetApp() {
     get deltaMes() { if (this.totalMesPrev === 0) return null; return ((this.totalMes - this.totalMesPrev) / this.totalMesPrev) * 100; },
     get categoriasMes() {
       const m = {};
-      this.gastosMes.forEach(g => { const k = g.categoria || 'Sin categoría'; m[k] = (m[k] || 0) + (+g.monto || 0); });
+      this.gastosMes.forEach(g => { const k = g.categoria || this.t('xl_no_cat'); m[k] = (m[k] || 0) + (+g.monto || 0); });
       const arr = Object.entries(m).map(([nombre, total]) => ({ nombre, total })).sort((a, b) => b.total - a.total);
       const max = Math.max(...arr.map(a => a.total), 1);
       return arr.map(a => ({ ...a, pct: Math.round(a.total / max * 100) }));
@@ -1147,8 +1363,8 @@ function fleetApp() {
       const out = [];
       this.vehiculos.forEach(v => {
         if (v.estado === 'vendido' || v.estado === 'inactivo') return;
-        if (v.seguro_vencimiento) { const d = this.diasHasta(v.seguro_vencimiento); if (d <= 30) out.push({ veh: v, tipo: 'Seguro', fecha: v.seguro_vencimiento, dias: d }); }
-        if (v.registro_vencimiento) { const d = this.diasHasta(v.registro_vencimiento); if (d <= 30) out.push({ veh: v, tipo: 'Registro', fecha: v.registro_vencimiento, dias: d }); }
+        if (v.seguro_vencimiento) { const d = this.diasHasta(v.seguro_vencimiento); if (d <= 30) out.push({ veh: v, tipo: this.t('ins_expiry'), fecha: v.seguro_vencimiento, dias: d }); }
+        if (v.registro_vencimiento) { const d = this.diasHasta(v.registro_vencimiento); if (d <= 30) out.push({ veh: v, tipo: this.t('reg_expiry'), fecha: v.registro_vencimiento, dias: d }); }
       });
       return out.sort((a, b) => a.dias - b.dias);
     },
@@ -1208,7 +1424,7 @@ function fleetApp() {
       } else {
         this.favoritosIds.push(id);
         const { error } = await this.sb.from('favoritos').insert({ user_id: this.user.id, vehiculo_id: id });
-        if (error) { this.favoritosIds = this.favoritosIds.filter(x => x !== id); this.avisar('Error', 'No pude guardar el favorito.', 'error'); }
+        if (error) { this.favoritosIds = this.favoritosIds.filter(x => x !== id); this.avisar(this.t('toast_err'), this.t('fav_error'), 'error'); }
       }
     },
 
@@ -1220,7 +1436,7 @@ function fleetApp() {
       this.gOpciones = []; this.fotoBlob = null; this.fotoPreview = '';
       this.gastoOpen = true;
     },
-    etiquetaVeh(id) { const v = this.vehiculos.find(x => x.id === id); return v ? `${v.modelo} · ${v.vin || 's/VIN'}` : ''; },
+    etiquetaVeh(id) { const v = this.vehiculos.find(x => x.id === id); return v ? `${v.modelo} · ${v.vin || this.t('no_vin')}` : ''; },
     buscarVehOpciones() {
       const t = this.gBusco.trim().toLowerCase();
       this.gForm.vehiculo_id = null;
@@ -1230,7 +1446,7 @@ function fleetApp() {
         [v.vin, v.modelo, v.placa].some(x => (x || '').toLowerCase().includes(t))
       ).slice(0, 6);
     },
-    elegirVeh(v) { this.gForm.vehiculo_id = v.id; this.gBusco = `${v.modelo} · ${v.vin || 's/VIN'}`; this.gOpciones = []; },
+    elegirVeh(v) { this.gForm.vehiculo_id = v.id; this.gBusco = `${v.modelo} · ${v.vin || this.t('no_vin')}`; this.gOpciones = []; },
 
     async elegirFoto(e) {
       const file = e.target.files[0]; if (!file) return;
@@ -1244,15 +1460,15 @@ function fleetApp() {
         cv.getContext('2d').drawImage(img, 0, 0, w, h);
         this.fotoPreview = cv.toDataURL('image/jpeg', 0.6);
         this.fotoBlob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.6));
-      } catch { this.avisar('Error', 'No pude procesar la imagen.', 'error'); }
+      } catch { this.avisar(this.t('toast_err'), this.t('photo_error'), 'error'); }
       this.comprimiendo = false; e.target.value = '';
     },
 
     async guardarGasto() {
       const f = this.gForm;
-      if (!f.vehiculo_id) { this.avisar('Falta el vehículo', 'Elegí en qué auto se hizo el gasto.', 'error'); return; }
-      if (!f.monto || parseFloat(f.monto) <= 0) { this.avisar('Monto inválido', 'Ingresá un monto mayor a cero.', 'error'); return; }
-      if (!f.concepto || !f.concepto.trim()) { this.avisar('Falta el concepto', 'Describí brevemente el gasto.', 'error'); return; }
+      if (!f.vehiculo_id) { this.avisar(this.t('no_veh_t'), this.t('no_veh_m'), 'error'); return; }
+      if (!f.monto || parseFloat(f.monto) <= 0) { this.avisar(this.t('amt_t'), this.t('amt_m'), 'error'); return; }
+      if (!f.concepto || !f.concepto.trim()) { this.avisar(this.t('conc_t'), this.t('conc_m'), 'error'); return; }
       this.guardando = true;
       try {
         let fotoPath = this.gEsEdicion ? (this.gSel.foto_url || null) : null;
@@ -1260,7 +1476,7 @@ function fleetApp() {
           if (this.gEsEdicion && this.gSel.foto_url) await this.sb.storage.from('facturas').remove([this.gSel.foto_url]);
           fotoPath = `${this.user.id}/${Date.now()}.jpg`;
           const { error: eUp } = await this.sb.storage.from('facturas').upload(fotoPath, this.fotoBlob, { contentType: 'image/jpeg' });
-          if (eUp) throw new Error('No pude subir la foto: ' + eUp.message);
+          if (eUp) throw new Error(this.t('photo_up_err') + eUp.message);
         }
         const fila = {
           concepto: f.concepto.trim(), monto: parseFloat(f.monto),
@@ -1272,11 +1488,11 @@ function fleetApp() {
         if (this.gEsEdicion) ({ error } = await this.sb.from('gastos').update(fila).eq('id', f.id));
         else { fila.vehiculo_id = f.vehiculo_id; fila.usuario_id = this.user.id; fila.foto_url = fotoPath; ({ error } = await this.sb.from('gastos').insert(fila)); }
         if (error) throw new Error(error.message);
-        this.avisar('Listo', this.gEsEdicion ? 'Gasto actualizado.' : 'Gasto guardado.');
+        this.avisar(this.t('toast_ok'), this.gEsEdicion ? this.t('ok_updated') : this.t('ok_saved'));
         this.gastoOpen = false;
         await this.cargarDatos();
         if (this.activeSection === 'dashboard') this.renderDashCharts();
-      } catch (e) { this.avisar('Error', e.message || 'No se pudo guardar el gasto.', 'error'); }
+      } catch (e) { this.avisar(this.t('toast_err'), e.message || this.t('login_fail'), 'error'); }
       this.guardando = false;
     },
 
@@ -1299,12 +1515,12 @@ function fleetApp() {
       this.gastoDetalleOpen = false; this.gastoOpen = true;
     },
     pedirBorrarGasto() {
-      this.confirmar('Eliminar gasto', '¿Borrar este gasto? Esta acción no se puede deshacer.', async () => {
+      this.confirmar(this.t('del_exp_t'), this.t('del_exp_m'), async () => {
         if (this.gSel.foto_url) await this.sb.storage.from('facturas').remove([this.gSel.foto_url]);
         const { error } = await this.sb.from('gastos').delete().eq('id', this.gSel.id);
-        if (error) { this.avisar('Error', error.message, 'error'); return; }
+        if (error) { this.avisar(this.t('toast_err'), error.message, 'error'); return; }
         this.gastoDetalleOpen = false;
-        this.avisar('Listo', 'Gasto eliminado.');
+        this.avisar(this.t('toast_ok'), this.t('ok_deleted'));
         await this.cargarDatos();
         if (this.activeSection === 'dashboard') this.renderDashCharts();
       });
@@ -1325,8 +1541,8 @@ function fleetApp() {
     },
     async guardarVeh() {
       const f = this.vForm;
-      if (!f.modelo.trim()) { this.avisar('Falta el modelo', 'Ingresá el modelo del vehículo.', 'error'); return; }
-      if (!f.vin.trim()) { this.avisar('Falta el VIN', 'Ingresá el VIN o patente.', 'error'); return; }
+      if (!f.modelo.trim()) { this.avisar(this.t('model_t'), this.t('model_m'), 'error'); return; }
+      if (!f.vin.trim()) { this.avisar(this.t('vin_t'), this.t('vin_m'), 'error'); return; }
       this.guardandoVeh = true;
       const fila = {
         vin: f.vin.trim().toUpperCase(), placa: this.nul(f.placa), modelo: f.modelo.trim(),
@@ -1349,26 +1565,26 @@ function fleetApp() {
         }
         await this.sincronizarAsignaciones(vehiculoId, f.asignaciones || []);
         this.vehOpen = false;
-        this.avisar('Listo', this.vEsEdicion ? 'Vehículo actualizado.' : 'Vehículo agregado.');
+        this.avisar(this.t('toast_ok'), this.vEsEdicion ? this.t('veh_updated') : this.t('veh_added'));
         await this.cargarDatos();
         if (this.vEsEdicion) { const nv = this.vehiculos.find(x => x.id === f.id); if (nv) { this.vSel = nv; this.vehDetalleOpen = true; } }
       } catch (e) {
-        this.avisar('Error', (e.message || '').includes('duplicate') ? 'Ese VIN ya está registrado.' : (e.message || 'No se pudo guardar.'), 'error');
+        this.avisar(this.t('toast_err'), (e.message || '').includes('duplicate') ? this.t('dup_vin') : (e.message || e), 'error');
       }
       this.guardandoVeh = false;
     },
     pedirBorrarVeh() {
       const v = this.vSel;
       const n = this.gastos.filter(g => g.vehiculo_id === v.id).length;
-      this.confirmar('Eliminar vehículo',
-        `Vas a eliminar ${v.modelo}${v.vin ? ' (' + v.vin + ')' : ''}. ${n > 0 ? 'Se borrarán también sus ' + n + ' gastos con sus facturas. ' : ''}Esta acción no se puede deshacer.`,
-        async () => {
-          const { error } = await this.sb.from('vehiculos').delete().eq('id', v.id);
-          if (error) { this.avisar('Error', error.message, 'error'); return; }
-          this.vehDetalleOpen = false;
-          this.avisar('Listo', 'Vehículo eliminado.');
-          await this.cargarDatos();
-        });
+      const nom = v.modelo + (v.vin ? ' (' + v.vin + ')' : '');
+      const msg = n > 0 ? this.t('del_veh_m').replace('{v}', nom).replace('{n}', n) : this.t('del_veh_m_non').replace('{v}', nom);
+      this.confirmar(this.t('del_veh_t'), msg, async () => {
+        const { error } = await this.sb.from('vehiculos').delete().eq('id', v.id);
+        if (error) { this.avisar(this.t('toast_err'), error.message, 'error'); return; }
+        this.vehDetalleOpen = false;
+        this.avisar(this.t('toast_ok'), this.t('veh_deleted'));
+        await this.cargarDatos();
+      });
     },
 
     /* ══════ DRIVERS ══════ */
@@ -1384,22 +1600,23 @@ function fleetApp() {
     },
     async guardarDriver() {
       const f = this.dForm;
-      if (!f.nombre.trim()) { this.avisar('Falta el nombre', 'Ingresá el nombre del driver.', 'error'); return; }
+      if (!f.nombre.trim()) { this.avisar(this.t('name_t'), this.t('name_m'), 'error'); return; }
       this.guardandoDriver = true;
       const fila = { nombre: f.nombre.trim(), telefono: this.nul(f.telefono), nota: this.nul(f.nota), user_id: f.user_id || null };
       let error;
       if (this.dEsEdicion) ({ error } = await this.sb.from('drivers').update(fila).eq('id', f.id));
       else { fila.creado_por = this.user.id; ({ error } = await this.sb.from('drivers').insert(fila)); }
-      if (error) this.avisar('Error', error.message, 'error');
-      else { this.driverOpen = false; this.avisar('Listo', this.dEsEdicion ? 'Driver actualizado.' : 'Driver agregado.'); await this.cargarDatos(); }
+      if (error) this.avisar(this.t('toast_err'), error.message, 'error');
+      else { this.driverOpen = false; this.avisar(this.t('toast_ok'), this.dEsEdicion ? this.t('driver_updated') : this.t('driver_added')); await this.cargarDatos(); }
       this.guardandoDriver = false;
     },
     pedirBorrarDriver(d) {
-      const n = this.autosDeDriver(d.id).length;
-      this.confirmar('Eliminar driver', `Vas a eliminar a ${d.nombre}.${n > 0 ? ' Quedará desligado de ' + n + ' vehículo(s); los vehículos y sus gastos NO se borran.' : ''}`, async () => {
+      const k = this.autosDeDriver(d.id).length;
+      const msg = k > 0 ? this.t('del_driver_m').replace('{n}', d.nombre).replace('{k}', k) : this.t('del_driver_m2').replace('{n}', d.nombre);
+      this.confirmar(this.t('del_driver_t'), msg, async () => {
         const { error } = await this.sb.from('drivers').delete().eq('id', d.id);
-        if (error) { this.avisar('Error', error.message, 'error'); return; }
-        this.avisar('Listo', 'Driver eliminado.');
+        if (error) { this.avisar(this.t('toast_err'), error.message, 'error'); return; }
+        this.avisar(this.t('toast_ok'), this.t('driver_deleted'));
         await this.cargarDatos();
       });
     },
@@ -1422,7 +1639,7 @@ function fleetApp() {
       return this.drivers.filter(d => !ids.includes(d.id));
     },
     agregarAsignacion() {
-      if (!this.vForm.nuevoDriver) { this.avisar('Elegí un driver', 'Seleccioná un driver de la lista.', 'error'); return; }
+      if (!this.vForm.nuevoDriver) { this.avisar(this.t('pick_driver_t'), this.t('pick_driver_m'), 'error'); return; }
       this.vForm.asignaciones.push({ driver_id: this.vForm.nuevoDriver, nombre: this.nombreDriver(this.vForm.nuevoDriver), principal: this.vForm.nuevoTipo === 'principal' });
       this.vForm.nuevoDriver = ''; this.vForm.nuevoTipo = 'principal';
     },
@@ -1431,7 +1648,7 @@ function fleetApp() {
       await this.sb.from('vehiculo_drivers').delete().eq('vehiculo_id', vehiculoId);
       if (asignaciones.length) {
         const { error } = await this.sb.from('vehiculo_drivers').insert(asignaciones.map(a => ({ vehiculo_id: vehiculoId, driver_id: a.driver_id, principal: a.principal })));
-        if (error) this.avisar('Atención', 'El vehículo se guardó pero hubo un problema con los drivers: ' + error.message, 'error');
+        if (error) this.avisar(this.t('assign_warn_t'), this.t('assign_warn_m') + error.message, 'error');
       }
     },
 
@@ -1451,7 +1668,7 @@ function fleetApp() {
       if (!t) { this.repOpciones = []; return; }
       this.repOpciones = this.vehiculos.filter(v => [v.vin, v.modelo, v.placa].some(x => (x || '').toLowerCase().includes(t))).slice(0, 6);
     },
-    elegirRepVeh(v) { this.repSelVeh = v.id; this.repBusco = `${v.modelo} · ${v.vin || 's/VIN'}`; this.repOpciones = []; this.generarReportes(); },
+    elegirRepVeh(v) { this.repSelVeh = v.id; this.repBusco = `${v.modelo} · ${v.vin || this.t('no_vin')}`; this.repOpciones = []; this.generarReportes(); },
     buscarRepEmp() {
       const t = this.repEmpBusco.trim().toLowerCase(); this.repSelEmp = null;
       if (!t) { this.repEmpOpciones = []; return; }
@@ -1476,7 +1693,9 @@ function fleetApp() {
       this.$nextTick(() => {
         this.matar('mes');
         const cv = document.getElementById('chMes'); if (!cv) return;
-        const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const MESES = this.lang === 'es'
+          ? ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+          : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         const labels = [], totales = [];
         for (let i = 5; i >= 0; i--) {
           const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i);
@@ -1530,65 +1749,73 @@ function fleetApp() {
     /* ══════ EXPORTS ══════ */
     exportExcel() {
       const l = this.repGastos;
-      if (!l.length) { this.avisar('Nada que exportar', 'No hay registros con estos filtros.', 'error'); return; }
+      if (!l.length) { this.avisar(this.t('nothing_export'), this.t('no_records_export'), 'error'); return; }
       const wb = XLSX.utils.book_new();
       const det = l.map(g => ({
-        Fecha: this.fmtFecha(g.fecha), Vehículo: `${g.modelo}${g.vin ? ' (' + g.vin + ')' : ''}`,
-        Empleado: g.empleado, Categoría: g.categoria || '—', Concepto: g.concepto,
-        Monto: +(+g.monto).toFixed(2), Odómetro: g.odometro || ''
+        [this.t('th_date')]: this.fmtFecha(g.fecha),
+        [this.t('xl_veh')]: `${g.modelo}${g.vin ? ' (' + g.vin + ')' : ''}`,
+        [this.t('xl_emp')]: g.empleado,
+        [this.t('xl_cat')]: g.categoria || '—',
+        [this.t('xl_concept')]: g.concepto,
+        [this.t('xl_amount')]: +(+g.monto).toFixed(2),
+        [this.t('xl_odo')]: g.odometro || ''
       }));
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(det), 'Detalle Gastos');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(det), this.t('xl_detail_sheet'));
       const mv = {}; l.forEach(g => { const k = `${g.modelo}${g.vin ? ' (' + g.vin + ')' : ''}`; mv[k] = (mv[k] || 0) + +g.monto; });
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-        Object.entries(mv).map(([Vehículo, t]) => ({ Vehículo, 'Total Gastado': +t.toFixed(2) })).sort((a, b) => b['Total Gastado'] - a['Total Gastado'])
-      ), 'Top Autos');
+        Object.entries(mv).map(([k, v]) => ({ [this.t('xl_veh')]: k, [this.t('xl_total_spent')]: +v.toFixed(2) })).sort((a, b) => b[this.t('xl_total_spent')] - a[this.t('xl_total_spent')])
+      ), this.t('xl_top_veh_sheet'));
       const me = {}; l.forEach(g => { me[g.empleado] = (me[g.empleado] || 0) + +g.monto; });
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-        Object.entries(me).map(([Empleado, t]) => ({ Empleado, 'Total Registrado': +t.toFixed(2) })).sort((a, b) => b['Total Registrado'] - a['Total Registrado'])
-      ), 'Top Empleados');
-      const mc = {}; l.forEach(g => { const k = g.categoria || 'Sin categoría'; mc[k] = (mc[k] || 0) + +g.monto; });
+        Object.entries(me).map(([k, v]) => ({ [this.t('xl_emp')]: k, [this.t('xl_total_reg')]: +v.toFixed(2) })).sort((a, b) => b[this.t('xl_total_reg')] - a[this.t('xl_total_reg')])
+      ), this.t('xl_top_emp_sheet'));
+      const mc = {}; l.forEach(g => { const k = g.categoria || this.t('xl_no_cat'); mc[k] = (mc[k] || 0) + +g.monto; });
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-        Object.entries(mc).map(([Categoría, t]) => ({ Categoría, 'Total': +t.toFixed(2) })).sort((a, b) => b.Total - a.Total)
-      ), 'Por Categoría');
+        Object.entries(mc).map(([k, v]) => ({ [this.t('xl_cat')]: k, [this.t('total')]: +v.toFixed(2) })).sort((a, b) => b[this.t('total')] - a[this.t('total')])
+      ), this.t('xl_cat_sheet'));
       XLSX.writeFile(wb, 'Reporte_Autos_HWC.xlsx');
-      this.avisar('Listo', 'Excel generado.');
+      this.avisar(this.t('toast_ok'), this.t('excel_done'));
     },
     exportPDF() {
       const l = this.repGastos;
-      if (!l.length) { this.avisar('Nada que exportar', 'No hay registros con estos filtros.', 'error'); return; }
+      if (!l.length) { this.avisar(this.t('nothing_export'), this.t('no_records_export'), 'error'); return; }
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.setFontSize(18); doc.text('Autos HWC · Reporte de Gastos', 14, 18);
+      doc.setFontSize(18); doc.text(this.t('pdf_title'), 14, 18);
       doc.setFontSize(9); doc.setTextColor(110);
-      let tipo = 'Tipo: General';
-      if (this.repTipo === 'vehiculo' && this.repSelVeh) { const v = this.vehiculos.find(x => x.id === this.repSelVeh); tipo = 'Tipo: Vehículo — ' + (v ? `${v.modelo} (${v.vin || 's/VIN'})` : ''); }
-      if (this.repTipo === 'empleado' && this.repSelEmp) tipo = 'Tipo: Empleado — ' + this.repEmpBusco;
-      let per = 'Período: Toda la historia';
-      if (this.repIni && this.repFin) per = `Período: ${this.repIni} al ${this.repFin}`;
-      else if (this.repIni) per = `Período: Desde ${this.repIni}`;
-      else if (this.repFin) per = `Período: Hasta ${this.repFin}`;
+      let tipo = this.t('pdf_type_lbl') + ' ' + this.t('rep_general');
+      if (this.repTipo === 'vehiculo' && this.repSelVeh) {
+        const v = this.vehiculos.find(x => x.id === this.repSelVeh);
+        tipo = this.t('pdf_type_lbl') + ' ' + this.t('pdf_type_veh') + ' — ' + (v ? `${v.modelo} (${v.vin || this.t('no_vin')})` : '');
+      }
+      if (this.repTipo === 'empleado' && this.repSelEmp) tipo = this.t('pdf_type_lbl') + ' ' + this.t('pdf_type_emp') + ' — ' + this.repEmpBusco;
+      let per;
+      if (this.repIni && this.repFin) per = `${this.t('pdf_period_lbl')} ${this.repIni} ${this.t('pdf_to')} ${this.repFin}`;
+      else if (this.repIni) per = `${this.t('pdf_period_lbl')} ${this.t('pdf_since')} ${this.repIni}`;
+      else if (this.repFin) per = `${this.t('pdf_period_lbl')} ${this.t('pdf_until')} ${this.repFin}`;
+      else per = this.t('pdf_period_lbl') + ' ' + this.t('pdf_all');
       doc.text(tipo, 14, 26); doc.text(per, 14, 31);
       doc.setTextColor(20); doc.setFontSize(11);
-      doc.text(`Total: ${this.fmtMoney(this.repRes.total)}   ·   Registros: ${this.repRes.count}   ·   Promedio: ${this.fmtMoney(this.repRes.count ? this.repRes.total / this.repRes.count : 0)}`, 14, 39);
+      doc.text(`${this.t('pdf_total')}: ${this.fmtMoney(this.repRes.total)}   ·   ${this.t('pdf_records')}: ${this.repRes.count}   ·   ${this.t('pdf_avg')}: ${this.fmtMoney(this.repRes.count ? this.repRes.total / this.repRes.count : 0)}`, 14, 39);
       let y = 46;
       if (this.repTipo === 'general') {
         const mv = {}; l.forEach(g => { const k = `${g.modelo}${g.vin ? ' (…' + g.vin.slice(-6) + ')' : ''}`; mv[k] = (mv[k] || 0) + +g.monto; });
-        const tv = Object.entries(mv).map(([k, t]) => [k, this.fmtMoney(t)]).sort((a, b) => parseFloat(b[1].slice(1).replace(/,/g, '')) - parseFloat(a[1].slice(1).replace(/,/g, ''))).slice(0, 5);
-        doc.autoTable({ startY: y, head: [['Top 5 autos que más gastan', 'Total']], body: tv, theme: 'striped', headStyles: { fillColor: [16, 185, 129] }, styles: { fontSize: 9 } });
+        const tv = Object.entries(mv).map(([k, v]) => [k, this.fmtMoney(v)]).sort((a, b) => parseFloat(b[1].slice(1).replace(/,/g, '')) - parseFloat(a[1].slice(1).replace(/,/g, ''))).slice(0, 5);
+        doc.autoTable({ startY: y, head: [[this.t('pdf_top_veh'), this.t('pdf_total')]], body: tv, theme: 'striped', headStyles: { fillColor: [16, 185, 129] }, styles: { fontSize: 9 } });
         y = doc.lastAutoTable.finalY + 6;
         const me = {}; l.forEach(g => { me[g.empleado] = (me[g.empleado] || 0) + +g.monto; });
-        const te = Object.entries(me).map(([k, t]) => [k, this.fmtMoney(t)]).sort((a, b) => parseFloat(b[1].slice(1).replace(/,/g, '')) - parseFloat(a[1].slice(1).replace(/,/g, ''))).slice(0, 5);
-        doc.autoTable({ startY: y, head: [['Top 5 empleados que más registran', 'Total']], body: te, theme: 'striped', headStyles: { fillColor: [14, 165, 233] }, styles: { fontSize: 9 } });
+        const te = Object.entries(me).map(([k, v]) => [k, this.fmtMoney(v)]).sort((a, b) => parseFloat(b[1].slice(1).replace(/,/g, '')) - parseFloat(a[1].slice(1).replace(/,/g, ''))).slice(0, 5);
+        doc.autoTable({ startY: y, head: [[this.t('pdf_top_emp'), this.t('pdf_total')]], body: te, theme: 'striped', headStyles: { fillColor: [14, 165, 233] }, styles: { fontSize: 9 } });
         y = doc.lastAutoTable.finalY + 8;
       }
       doc.autoTable({
         startY: y,
-        head: [['Fecha', 'Vehículo', 'Empleado', 'Categoría', 'Concepto', 'Monto']],
+        head: [[this.t('th_date'), this.t('th_vehicle'), this.t('th_employee'), this.t('th_category'), this.t('th_concept'), this.t('th_amount')]],
         body: l.map(g => [this.fmtFecha(g.fecha), `${g.modelo}${g.vin ? ' · ' + g.vin.slice(-6) : ''}`, g.empleado, g.categoria || '—', g.concepto, this.fmtMoney(g.monto)]),
         theme: 'grid', headStyles: { fillColor: [51, 65, 85] }, styles: { fontSize: 8 }
       });
       doc.save('Reporte_Autos_HWC.pdf');
-      this.avisar('Listo', 'PDF generado.');
+      this.avisar(this.t('toast_ok'), this.t('pdf_done'));
     },
   }
 }
